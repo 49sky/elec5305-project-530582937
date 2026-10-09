@@ -1,26 +1,42 @@
-function split = create_source_split(speechRoot,musicRoot,outDir)
+function split = create_source_split(datasetRoot,outDir)
 
 if nargin < 1
-    speechRoot = fullfile("data","musan","speech");
+    datasetRoot = fullfile("data","musan");
 end
+
 if nargin < 2
-    musicRoot = fullfile("data","musan","music");
-end
-if nargin < 3
     outDir = fullfile("data","splits");
 end
 
 rng(530582937);
 
-speech = dir(fullfile(speechRoot,"**","*.wav"));
-music = dir(fullfile(musicRoot,"**","*.wav"));
+allFiles = dir(fullfile(datasetRoot,"**","*"));
+allFiles = allFiles(~[allFiles.isdir]);
 
-if isempty(speech) || isempty(music)
-    error("No MUSAN speech or music WAV files found. Check data/README.md.");
+if isempty(allFiles)
+    error("No files found under %s.",datasetRoot);
 end
 
-speechPaths = string(fullfile({speech.folder},{speech.name}))';
-musicPaths = string(fullfile({music.folder},{music.name}))';
+names = string({allFiles.name})';
+paths = string(fullfile({allFiles.folder},{allFiles.name}))';
+
+isWav = endsWith(lower(names),".wav");
+paths = paths(isWav);
+
+if isempty(paths)
+    error("No WAV files found under %s.",datasetRoot);
+end
+
+normalised = replace(paths,"\","/");
+speechMask = contains(lower(normalised),"/speech/");
+musicMask = contains(lower(normalised),"/music/");
+
+speechPaths = paths(speechMask);
+musicPaths = paths(musicMask);
+
+if isempty(speechPaths) || isempty(musicPaths)
+    error("Could not identify both speech and music WAV files in the MUSAN folder.");
+end
 
 repoPrefix = string(pwd) + filesep;
 speechPaths = erase(speechPaths,repoPrefix);
