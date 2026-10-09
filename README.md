@@ -1,80 +1,32 @@
-# elec5305-project-530582937
-
 # ELEC5305 Project – Speech and Music Presence Detection in Overlapping Audio
 
-## Project Overview
+## Overview
 
-This project investigates the detection of speech and music when both sources occur simultaneously in an audio recording.
-
-Instead of classifying an audio sample as either speech or music, the system will independently determine:
-
-- whether speech is present;
-- whether music is present.
+This project investigates how reliably speech and music can be detected when both are present in the same audio recording.
 
 The main research question is:
 
-> **How does the relative level of speech and music affect the ability to detect both sources in an overlapping mixture, and how do interpretable audio features compare with a pretrained audio classifier as one source becomes progressively weaker?**
+> How does the relative level of speech and music affect the ability to detect both sources in an overlapping mixture, and how do interpretable audio features compare with a pretrained audio classifier as one source becomes progressively weaker?
 
-The project will be implemented primarily in MATLAB and will compare a handcrafted signal-processing approach with pretrained YAMNet.
-
-
-## Current Progress
-
-The project has now moved from the proposal stage into preliminary implementation.
-
-Current code includes:
-
-- source-disjoint MUSAN train/validation/test splitting;
-- controlled speech/music mixture generation;
-- SMR verification;
-- fixed 16 kHz audio preparation;
-- preliminary mixtures at -10, 0 and +10 dB;
-- STFT spectrogram generation;
-- pretrained YAMNet inference;
-- preliminary Speech/Music score analysis versus SMR.
-
-The handcrafted-feature SVM system is the next implementation milestone.
-
-## Running the Preliminary Milestone
-
-Download MUSAN and place the speech and music folders under:
-
-```text
-data/musan/speech/
-data/musan/music/
-```
-
-Then, from the repository root in MATLAB:
-
-```matlab
-addpath("src")
-create_source_split
-preliminary_mixture_demo
-```
-
-Generated CSV files, audio mixtures and figures are written under `results/`.
+The project is implemented primarily in MATLAB.
 
 ## Speech-to-Music Ratio
 
-Controlled speech/music mixtures will be generated using:
+Controlled mixtures are generated using
 
-\[
-x[n] = s[n] + a\,m[n]
-\]
+```text
+x[n] = s[n] + a m[n]
+```
 
-where:
+where `s[n]` is speech, `m[n]` is music, and `a` controls the relative level of the music signal.
 
-- `s[n]` is the speech signal;
-- `m[n]` is the music signal;
-- `a` controls the relative level of music.
+The speech-to-music ratio is
 
-The speech-to-music ratio (SMR) is defined as:
+```text
+SMR = 10 log10(Pspeech / Pmusic)
+```
 
-\[
-SMR = 10\log_{10}\left(\frac{P_{speech}}{P_{music}}\right)
-\]
-
-The main experiment will use:
+The planned experiment uses:
 
 - -20 dB
 - -10 dB
@@ -84,174 +36,130 @@ The main experiment will use:
 - +10 dB
 - +20 dB
 
-Positive SMR means speech is stronger than music, while negative SMR means music is stronger.
+Positive SMR means speech is stronger than music. Negative SMR means music is stronger.
 
 ## Dataset
 
-The main dataset will be the **MUSAN speech and music corpus**.
+The project uses speech and music recordings from the MUSAN corpus.
 
-Speech and music source recordings will first be divided into separate:
+Source recordings are divided into training, validation and test sets before segmentation or mixture generation. This keeps segments from the same original recording in a single partition.
 
-- training;
-- validation;
-- test
+MUSAN: https://www.openslr.org/17/
 
-partitions.
+The dataset itself is not stored in this repository.
 
-The source split will be completed **before segmentation and mixture generation** so that segments from the same original recording cannot appear in multiple partitions.
+## Detection Task
 
-This avoids data leakage between training and testing.
+Two independent binary outputs are used:
 
-## Output Labels
-
-The project uses a multi-label formulation with two independent binary outputs:
-
-| Audio condition | Speech present | Music present |
+| Audio | Speech present | Music present |
 |---|---:|---:|
 | Speech only | 1 | 0 |
 | Music only | 0 | 1 |
 | Speech + music | 1 | 1 |
 
-The system therefore answers:
+## System A – Handcrafted Features
 
-1. **Is speech present?**
-2. **Is music present?**
+The first system will use frame-based audio features including:
 
-## System A – Handcrafted Audio Features
+- RMS energy
+- zero-crossing rate
+- spectral centroid
+- spectral flux
+- spectral rolloff
+- spectral bandwidth
+- spectral flatness
+- MFCCs
 
-The first detection system will use interpretable audio features calculated in MATLAB.
+Frame-level measurements will be summarised over each audio segment using statistics such as mean and standard deviation.
 
-Initial features include:
+Two linear SVMs will then be used:
 
-- RMS energy;
-- zero-crossing rate;
-- spectral centroid;
-- spectral flux;
-- spectral rolloff;
-- spectral bandwidth;
-- spectral flatness;
-- MFCCs.
-
-Features will be calculated on short audio frames and then aggregated over each analysis segment using statistics such as mean and standard deviation.
-
-Two linear support vector machines will then be trained:
-
-- speech-presence SVM;
-- music-presence SVM.
-
-The purpose is not to compare many machine-learning algorithms, but to investigate how interpretable signal-processing features behave when speech and music overlap.
+- speech presence detector
+- music presence detector
 
 ## System B – YAMNet
 
-The second system will use pretrained **YAMNet** through MATLAB Audio Toolbox.
+The second system uses pretrained YAMNet through MATLAB Audio Toolbox.
 
-YAMNet will be used only as a pretrained reference system and will not be retrained or fine-tuned.
+YAMNet is used as a reference model only and is not retrained or fine-tuned. Speech and Music output scores are extracted for each mixture.
 
-Speech- and music-related output scores will be examined for each audio mixture and compared with the handcrafted SVM system.
+## Preliminary Implementation
 
-## Proposed Experimental Method
+The current code includes:
 
-The project will follow these main steps:
+- MUSAN speech and music file indexing
+- reproducible source-level train/validation/test splitting
+- audio conversion to mono and 16 kHz
+- fixed-duration segment extraction
+- controlled mixture generation at a requested SMR
+- measured SMR verification
+- STFT spectrogram generation
+- pretrained YAMNet inference
+- Speech and Music score extraction
 
-1. Obtain speech and music recordings from MUSAN.
-2. Create source-disjoint training, validation and test partitions.
-3. Convert audio to a consistent format and sampling rate.
-4. Segment selected source recordings.
-5. Generate controlled speech/music mixtures at specified SMRs.
-6. Verify the measured SMR of each generated mixture.
-7. Generate STFT spectrograms for representative examples.
-8. Extract frame-based audio features.
-9. Aggregate features over each audio segment.
-10. Train separate linear SVM speech and music detectors.
-11. Run pretrained YAMNet on the same mixtures.
-12. Select detection thresholds using validation data.
-13. Evaluate both systems using unseen test sources.
-14. Analyse detection performance as a function of SMR.
-15. Examine representative success and failure cases.
+The preliminary experiment uses 10 speech sources, 10 music sources and three SMR values:
 
-## Evaluation
+```text
+-10 dB, 0 dB, +10 dB
+```
 
-Performance will be reported separately for speech and music using:
+## Repository Structure
 
-- precision;
-- recall;
-- F1-score.
+```text
+.
+├── README.md
+├── data/
+│   └── README.md
+├── src/
+│   ├── create_source_split.m
+│   ├── make_smr_mixture.m
+│   ├── read_audio_segment.m
+│   ├── yamnet_scores.m
+│   └── preliminary_mixture_demo.m
+└── results/
+    ├── preliminary_audio/
+    └── preliminary_figures/
+```
 
-The main analysis will examine:
+## Running the Preliminary Experiment
 
-- speech recall versus SMR;
-- music recall versus SMR;
-- weaker-source recall versus relative source level.
+Place the MUSAN speech and music folders under:
 
-The project will investigate how detection performance changes as either speech or music becomes progressively weaker in the mixture.
+```text
+data/musan/speech/
+data/musan/music/
+```
 
-Representative failure cases will also be analysed using waveforms, spectrograms, audio features and YAMNet scores.
+From the repository root in MATLAB:
 
-## Initial Milestone
+```matlab
+addpath("src")
+create_source_split
+preliminary_mixture_demo
+```
 
-The first proof-of-concept experiment will use:
+The scripts save generated mixtures, figures and CSV results under `results/`.
 
-- 10 speech recordings;
-- 10 music recordings;
-- SMR = -10 dB, 0 dB and +10 dB.
+## Planned Evaluation
 
-For selected mixtures, the initial implementation will produce:
+The final evaluation will report:
 
-- waveform;
-- spectrogram;
-- measured SMR;
-- YAMNet speech score;
-- YAMNet music score.
+- speech precision, recall and F1-score
+- music precision, recall and F1-score
+- speech recall versus SMR
+- music recall versus SMR
+- weaker-source recall
 
-Once this pipeline is verified, the experiment will be expanded to a larger dataset and the full set of SMR values.
-
-## Expected Outcome
-
-The expected outcome is a reproducible MATLAB-based system that demonstrates how speech and music detection performance changes under controlled overlapping conditions.
-
-The final project will compare:
-
-**Handcrafted audio features + two linear SVM detectors**
-
-with:
-
-**Pretrained YAMNet speech/music scores**
-
-The main result will not simply be an overall classification accuracy. Instead, the project will determine how reliably each system detects speech and music as the relative acoustic level between the two sources changes.
-
-## Tools
+## MATLAB Requirements
 
 - MATLAB
 - Signal Processing Toolbox
 - Audio Toolbox
+- Deep Learning Toolbox
 - Statistics and Machine Learning Toolbox
-- Pretrained YAMNet
-- MUSAN dataset
 
-## Repository Structure
+## Course
 
-The repository is expected to contain:
-
-```text
-elec5305-project-530582937/
-│
-├── README.md
-├── proposal/
-│   └── revised_project_proposal.pdf
-│
-├── src/
-│   ├── dataset/
-│   ├── mixture_generation/
-│   ├── features/
-│   ├── svm/
-│   ├── yamnet/
-│   └── evaluation/
-│
-├── results/
-│   ├── figures/
-│   └── tables/
-│
-├── docs/
-│   └── literature_review/
-│
-└── final_report/
+ELEC5305 – Acoustics, Speech and Signal Processing  
+The University of Sydney
