@@ -1,0 +1,48 @@
+name: Preliminary MATLAB Experiment
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/preliminary-matlab.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  preliminary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Git LFS
+        run: |
+          git lfs install
+          git clone --depth 1 https://huggingface.co/datasets/FluidInference/musan data/musan
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2026b
+          products: >
+            Audio_Toolbox
+            Signal_Processing_Toolbox
+            Deep_Learning_Toolbox
+
+      - name: Run preliminary experiment
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath("src"); create_source_split; preliminary_mixture_demo
+
+      - name: Commit preliminary results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/splits/source_split.csv
+          git add results/preliminary_results.csv
+          git add results/preliminary_yamnet_summary.csv
+          git add results/preliminary_figures/*.png
+          git commit -m "Add preliminary SMR and YAMNet results" || exit 0
+          git push
