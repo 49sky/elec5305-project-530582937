@@ -1,22 +1,18 @@
-# MUSAN Dataset Setup
+# MUSAN Dataset
 
-The MUSAN dataset is not stored in this repository.
+The MUSAN dataset is used for the speech and music source recordings.
 
-Download MUSAN from:
+Download: https://www.openslr.org/17/
 
-https://www.openslr.org/17/
-
-After extraction, the preliminary MATLAB code expects:
+Expected local structure:
 
 ```text
 data/
 └── musan/
     ├── speech/
-    │   └── ... WAV files
     └── music/
-        └── ... WAV files
 ```
 
-The scripts recursively search the speech and music directories.
+The dataset is excluded from Git because of its size.
 
-The source recordings are split before segmentation or mixture generation so that one original source file cannot appear in more than one of the training, validation or test partitions.
+Source recordings are split into training, validation and test partitions before any segmentation or mixture generation.
