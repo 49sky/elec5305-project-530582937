@@ -17,6 +17,43 @@ The main research question is:
 
 The project will be implemented primarily in MATLAB and will compare a handcrafted signal-processing approach with pretrained YAMNet.
 
+
+## Current Progress
+
+The project has now moved from the proposal stage into preliminary implementation.
+
+Current code includes:
+
+- source-disjoint MUSAN train/validation/test splitting;
+- controlled speech/music mixture generation;
+- SMR verification;
+- fixed 16 kHz audio preparation;
+- preliminary mixtures at -10, 0 and +10 dB;
+- STFT spectrogram generation;
+- pretrained YAMNet inference;
+- preliminary Speech/Music score analysis versus SMR.
+
+The handcrafted-feature SVM system is the next implementation milestone.
+
+## Running the Preliminary Milestone
+
+Download MUSAN and place the speech and music folders under:
+
+```text
+data/musan/speech/
+data/musan/music/
+```
+
+Then, from the repository root in MATLAB:
+
+```matlab
+addpath("src")
+create_source_split
+preliminary_mixture_demo
+```
+
+Generated CSV files, audio mixtures and figures are written under `results/`.
+
 ## Speech-to-Music Ratio
 
 Controlled speech/music mixtures will be generated using:
