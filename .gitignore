@@ -1,0 +1,12 @@
+# MUSAN is downloaded locally and should not be committed
+data/musan/
+
+# MATLAB temporary/autosave files
+*.asv
+*.m~
+slprj/
+codegen/
+
+# OS metadata
+.DS_Store
+Thumbs.db
