@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - ".github/workflows/preliminary-matlab.yml"
+      - "src/**"
 
 permissions:
   contents: write
@@ -17,10 +18,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
-      - name: Install Git LFS
+      - name: Download MUSAN
         run: |
           git lfs install
           git clone --depth 1 https://huggingface.co/datasets/FluidInference/musan data/musan
+          echo "WAV files found:"
+          find data/musan -type f -iname "*.wav" | wc -l
+          find data/musan -type f -iname "*.wav" | head -n 5
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v3
