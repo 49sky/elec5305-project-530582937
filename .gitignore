@@ -1,5 +1,9 @@
-# MUSAN is downloaded locally and should not be committed
+# Dataset files
 data/musan/
+data/splits/*.mat
+
+# Generated audio
+results/preliminary_audio/*.wav
 
 # MATLAB temporary/autosave files
 *.asv
