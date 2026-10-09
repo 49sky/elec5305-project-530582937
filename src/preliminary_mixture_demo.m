@@ -37,7 +37,24 @@ if ~isfolder(figureDir)
     mkdir(figureDir);
 end
 
-[net,classNames] = audioPretrainedNetwork("yamnet");
+try
+    [net,classNames] = audioPretrainedNetwork("yamnet");
+catch
+    modelName = "yamnet";
+    downloadFolder = fullfile(tempdir,"pretrainedNetDownload");
+    if ~isfolder(downloadFolder)
+        mkdir(downloadFolder);
+    end
+    downloadURL = sprintf("https://ssd.mathworks.com/supportfiles/audio/%s.zip",modelName);
+    zipFile = websave(fullfile(downloadFolder,modelName + ".zip"),downloadURL);
+    modelFolder = fullfile(tempdir,"pretrainedAudioModels");
+    if ~isfolder(modelFolder)
+        mkdir(modelFolder);
+    end
+    unzip(zipFile,modelFolder);
+    addpath(fullfile(modelFolder,modelName));
+    [net,classNames] = audioPretrainedNetwork("yamnet");
+end
 
 pairColumn = [];
 speechFileColumn = strings(0);
@@ -146,6 +163,7 @@ title("Preliminary YAMNet scores versus SMR");
 legend("Speech","Music","Location","best");
 
 exportgraphics(fig,fullfile(figureDir,"yamnet_scores_vs_smr.png"),"Resolution",180);
+close(fig);
 
 disp(results(:,["Pair","TargetSMR_dB","MeasuredSMR_dB","YAMNetSpeechScore","YAMNetMusicScore"]));
 disp(summary);
