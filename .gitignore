@@ -4,6 +4,7 @@ data/splits/*.mat
 
 # Generated audio
 results/preliminary_audio/*.wav
+results/*models.mat
 
 # MATLAB temporary/autosave files
 *.asv
