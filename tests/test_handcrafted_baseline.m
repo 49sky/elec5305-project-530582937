@@ -23,6 +23,10 @@ verifySize(testCase,frames,[1 20]);
 verifyTrue(testCase,all(isfinite(features)));
 verifyEqual(testCase,features(1:7),zeros(1,7));
 verifyEqual(testCase,features(21:40),zeros(1,20));
+quietTone = 5e-8*sin(2*pi*1000*(0:15999)'/16000);
+[~,~,quietFrames] = handcrafted_features(quietTone,16000);
+verifyGreaterThanOrEqual(testCase,quietFrames(:,7),zeros(size(quietFrames,1),1));
+verifyLessThanOrEqual(testCase,quietFrames(:,7),ones(size(quietFrames,1),1)+1e-12);
 end
 
 function testMetricCounts(testCase)

@@ -146,7 +146,8 @@ end
 
 function plot_mixtures(metadata,audio,fs,smrValues,figureDir)
 for pair = unique(metadata.Pair)'
-    fig = figure("Color","w","Visible","off");
+    fig = figure("Color","w","Visible","off", ...
+        "Position",[100 100 max(900,300*numel(smrValues)) 560]);
     layout = tiledlayout(2,numel(smrValues),"TileSpacing","compact","Padding","compact");
     for k = 1:numel(smrValues)
         row = find(metadata.Pair == pair & metadata.TargetSMR_dB == smrValues(k),1);

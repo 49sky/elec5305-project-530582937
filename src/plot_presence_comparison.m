@@ -1,7 +1,7 @@
 function plot_presence_comparison(metrics,recallBySMR,figureDir)
 %PLOT_PRESENCE_COMPARISON Hard-decision metrics on the same test examples.
 systems = unique(metrics.System,"stable");
-fig = figure("Color","w","Visible","off");
+fig = figure("Color","w","Visible","off","Position",[100 100 900 380]);
 layout = tiledlayout(1,2,"TileSpacing","compact");
 for k = 1:2
     targets = ["Speech","Music"];
@@ -17,7 +17,7 @@ end
 title(layout,"Held-out test performance (pure sources and mixtures)");
 exportgraphics(fig,fullfile(figureDir,"presence_metrics_comparison.png"),"Resolution",180);
 close(fig);
-fig = figure("Color","w","Visible","off");
+fig = figure("Color","w","Visible","off","Position",[100 100 1200 380]);
 layout = tiledlayout(1,3,"TileSpacing","compact");
 variables = ["SpeechRecall","MusicRecall","WeakerSourceRecall"];
 titles = ["Speech","Music","Weaker source (0 dB excluded)"];
