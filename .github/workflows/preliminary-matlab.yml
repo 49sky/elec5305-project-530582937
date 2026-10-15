@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/preliminary-matlab.yml"
       - "src/**"
+      - "tests/**"
 
 permissions:
   contents: write
@@ -18,14 +19,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
-      - name: Download MUSAN
-        run: |
-          git lfs install
-          git clone --depth 1 https://huggingface.co/datasets/FluidInference/musan data/musan
-          echo "WAV files found:"
-          find data/musan -type f -iname "*.wav" | wc -l
-          find data/musan -type f -iname "*.wav" | head -n 5
-
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v3
         with:
@@ -34,19 +27,40 @@ jobs:
             Audio_Toolbox
             Signal_Processing_Toolbox
             Deep_Learning_Toolbox
+            Statistics_and_Machine_Learning_Toolbox
+
+      - name: Run synthetic regression tests
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath("src"); results = runtests("tests"); assertSuccess(results)
+
+      - name: Download MUSAN
+        run: |
+          mkdir -p data
+          # Stream the official archive to avoid keeping a second 11 GB copy.
+          curl --fail --location https://www.openslr.org/resources/17/musan.tar.gz \
+            | tar -xz -C data --wildcards 'musan/speech/*' 'musan/music/*'
+          echo "Speech WAV files: $(find data/musan/speech -type f -iname '*.wav' | wc -l)"
+          echo "Music WAV files: $(find data/musan/music -type f -iname '*.wav' | wc -l)"
 
       - name: Run preliminary experiment
         uses: matlab-actions/run-command@v3
         with:
           command: addpath("src"); create_source_split; preliminary_mixture_demo
 
+      - name: Save trained models and run provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: preliminary-handcrafted-models
+          path: results/preliminary_handcrafted_models.mat
+          if-no-files-found: error
+
       - name: Commit preliminary results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/splits/source_split.csv
-          git add results/preliminary_results.csv
-          git add results/preliminary_yamnet_summary.csv
+          git add results/*.csv
           git add results/preliminary_figures/*.png
-          git commit -m "Add preliminary SMR and YAMNet results" || exit 0
+          git commit -m "Add preliminary handcrafted SVM and YAMNet results" || exit 0
           git push
