@@ -48,6 +48,8 @@ MUSAN: https://www.openslr.org/17/
 
 The dataset itself is not stored in this repository.
 
+Download the complete corpus from the [official MUSAN page](https://www.openslr.org/17/) and extract `musan/` inside `data/`. CI streams that official archive and extracts the speech/music folders. The archive is about 11 GB; allow enough download time and disk space. The former CI mirror contained noise audio only and is no longer used.
+
 ## Detection Task
 
 Two independent binary outputs are used:
