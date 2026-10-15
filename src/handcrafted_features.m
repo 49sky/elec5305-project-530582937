@@ -4,8 +4,8 @@ function [features,names,frames] = handcrafted_features(x,fs)
 % 40 triangular HTK-mel bands (20 Hz to Nyquist), 13 orthonormal MFCCs
 % including c0. No deltas, pre-emphasis, liftering or segment-level fitting.
 
-validateattributes(x,{"numeric"},{"vector","real","finite","nonempty"});
-validateattributes(fs,{"numeric"},{"scalar","real","finite",">=",1000});
+validateattributes(x,{'numeric'},{'vector','real','finite','nonempty'});
+validateattributes(fs,{'numeric'},{'scalar','real','finite','>=',1000});
 x = double(x(:));
 windowLength = round(0.025*fs);
 hopLength = round(0.010*fs);

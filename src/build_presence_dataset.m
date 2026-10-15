@@ -1,8 +1,8 @@
 function [X,metadata,featureNames,audio] = build_presence_dataset(split,partition,nPairs,fs,durationSec,smrValues)
 %BUILD_PRESENCE_DATASET One central segment per source, with pure negatives.
 % Pairing is deterministic; all derivatives retain their source partition.
-validateattributes(nPairs,{"numeric"},{"scalar","integer","positive"});
-validateattributes(smrValues,{"numeric"},{"vector","real","finite","nonempty"});
+validateattributes(nPairs,{'numeric'},{'scalar','integer','positive'});
+validateattributes(smrValues,{'numeric'},{'vector','real','finite','nonempty'});
 speechFiles = string(split.speech.(partition)(:));
 musicFiles = string(split.music.(partition)(:));
 if numel(speechFiles) < nPairs || numel(musicFiles) < nPairs
@@ -16,8 +16,8 @@ audio = cell(nRows,1);
 metadata = table(repmat(string(partition),nRows,1),zeros(nRows,1), ...
     strings(nRows,1),strings(nRows,1),strings(nRows,1),nan(nRows,1), ...
     nan(nRows,1),false(nRows,1),false(nRows,1), ...
-    "VariableNames",{"Partition","Pair","AudioType","SpeechFile","MusicFile", ...
-    "TargetSMR_dB","MeasuredSMR_dB","SpeechPresent","MusicPresent"});
+    'VariableNames',{'Partition','Pair','AudioType','SpeechFile','MusicFile', ...
+    'TargetSMR_dB','MeasuredSMR_dB','SpeechPresent','MusicPresent'});
 row = 0;
 for pair = 1:nPairs
     speech = read_audio_segment(speechFiles(pair),fs,durationSec);

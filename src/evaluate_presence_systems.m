@@ -10,7 +10,7 @@ recallBySMR = table;
 for system = 1:numel(systemNames)
     m = presence_metrics(truth,predictions(:,:,system));
     m = addvars(m,repmat(string(systemNames(system)),2,1),["Speech";"Music"], ...
-        "Before",1,"NewVariableNames",{"System","Target"});
+        'Before',1,'NewVariableNames',{'System','Target'});
     metrics = [metrics; m]; %#ok<AGROW>
     for smr = smrValues(:)'
         rows = metadata.AudioType == "mixture" & metadata.TargetSMR_dB == smr;
@@ -32,9 +32,9 @@ for system = 1:numel(systemNames)
             weakerCount = 0;
         end
         row = table(string(systemNames(system)),smr,n,speechRecall,musicRecall, ...
-            weaker,weakerCount,weakerRecall,"VariableNames",{"System","SMR_dB", ...
-            "Mixtures","SpeechRecall","MusicRecall","WeakerSource", ...
-            "WeakerSourceCount","WeakerSourceRecall"});
+            weaker,weakerCount,weakerRecall,'VariableNames',{'System','SMR_dB', ...
+            'Mixtures','SpeechRecall','MusicRecall','WeakerSource', ...
+            'WeakerSourceCount','WeakerSourceRecall'});
         recallBySMR = [recallBySMR; row]; %#ok<AGROW>
     end
 end

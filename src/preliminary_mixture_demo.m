@@ -78,7 +78,7 @@ for row = find(predictions.AudioType == "mixture")'
     predictions.MixtureFile(row) = fullfile(audioDir,name);
     audiowrite(predictions.MixtureFile(row),audio{row},options.SampleRate);
 end
-features = [metadata,array2table(X,"VariableNames",cellstr(featureNames))];
+features = [metadata,array2table(X,'VariableNames',cellstr(featureNames))];
 writetable(features,fullfile(options.ResultsDir,"preliminary_handcrafted_features.csv"));
 writetable(predictions,fullfile(options.ResultsDir,"preliminary_presence_predictions.csv"));
 writetable(tuning,fullfile(options.ResultsDir,"preliminary_svm_tuning.csv"));
@@ -140,8 +140,8 @@ for k = 1:numel(smrValues)
     values(k,:) = [mean(mixtures.YAMNetSpeechScore(rows)),std(mixtures.YAMNetSpeechScore(rows)), ...
         mean(mixtures.YAMNetMusicScore(rows)),std(mixtures.YAMNetMusicScore(rows))];
 end
-summary = array2table([smrValues(:),values],"VariableNames", ...
-    {"SMR_dB","MeanSpeechScore","StdSpeechScore","MeanMusicScore","StdMusicScore"});
+summary = array2table([smrValues(:),values],'VariableNames', ...
+    {'SMR_dB','MeanSpeechScore','StdSpeechScore','MeanMusicScore','StdMusicScore'});
 end
 
 function plot_mixtures(metadata,audio,fs,smrValues,figureDir)

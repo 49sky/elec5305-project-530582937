@@ -127,7 +127,7 @@ end
 function testWeakerSourceAndSharedEvaluation(testCase)
 metadata = table(repmat("test",5,1),["mixture";"mixture";"mixture";"speech_only";"music_only"], ...
     [-10;0;10;NaN;NaN],logical([1;1;1;1;0]),logical([1;1;1;0;1]), ...
-    "VariableNames",{"Partition","AudioType","TargetSMR_dB","SpeechPresent","MusicPresent"});
+    'VariableNames',{'Partition','AudioType','TargetSMR_dB','SpeechPresent','MusicPresent'});
 predictions = false(5,2,2);
 predictions(:,:,1) = [0 1;1 1;1 0;1 0;0 1];
 predictions(:,:,2) = [1 0;1 1;0 1;1 1;1 1];
