@@ -1,0 +1,7 @@
+System,SMR_dB,Mixtures,SpeechRecall,MusicRecall,WeakerSource,WeakerSourceCount,WeakerSourceRecall
+Handcrafted SVM,-10,10,1,1,Speech,10,1
+Handcrafted SVM,0,10,1,1,None,0,NaN
+Handcrafted SVM,10,10,1,1,Music,10,1
+YAMNet,-10,10,0,1,Speech,10,0
+YAMNet,0,10,0,1,None,0,NaN
+YAMNet,10,10,0.6,0.4,Music,10,0.4

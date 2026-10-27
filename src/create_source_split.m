@@ -8,7 +8,9 @@ if nargin < 2
     outDir = fullfile("data","splits");
 end
 
-rng(530582937);
+previousRng = rng;
+cleanupRng = onCleanup(@() rng(previousRng));
+rng(530582937,"twister");
 
 allFiles = dir(fullfile(datasetRoot,"**","*"));
 allFiles = allFiles(~[allFiles.isdir]);
@@ -42,6 +44,9 @@ repoPrefix = string(pwd) + filesep;
 speechPaths = erase(speechPaths,repoPrefix);
 musicPaths = erase(musicPaths,repoPrefix);
 
+% Sort before shuffling so filesystem enumeration order cannot change a split.
+speechPaths = sort(speechPaths);
+musicPaths = sort(musicPaths);
 speechPaths = speechPaths(randperm(numel(speechPaths)));
 musicPaths = musicPaths(randperm(numel(musicPaths)));
 
