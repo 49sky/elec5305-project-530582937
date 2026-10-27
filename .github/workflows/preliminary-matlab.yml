@@ -5,11 +5,12 @@ on:
   push:
     paths:
       - ".github/workflows/preliminary-matlab.yml"
+      - ".github/scripts/**"
       - "src/**"
       - "tests/**"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   preliminary:
@@ -18,6 +19,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+
+      - name: Test concurrent result publication
+        run: python3 -m unittest discover -s tests -p 'test_publish_results.py' -v
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v3
@@ -34,14 +38,25 @@ jobs:
         with:
           command: addpath("src"); results = runtests("tests"); assertSuccess(results)
 
-      - name: Download MUSAN
+      - name: Download and verify MUSAN speech and music
         run: |
           mkdir -p data
           # Stream the official archive to avoid keeping a second 11 GB copy.
           curl --fail --location https://www.openslr.org/resources/17/musan.tar.gz \
             | tar -xz -C data --wildcards 'musan/speech/*' 'musan/music/*'
-          echo "Speech WAV files: $(find data/musan/speech -type f -iname '*.wav' | wc -l)"
-          echo "Music WAV files: $(find data/musan/music -type f -iname '*.wav' | wc -l)"
+          for category in speech music; do
+            folder="data/musan/$category"
+            if [ ! -d "$folder" ]; then
+              echo "::error::MUSAN $category folder is missing after extraction."
+              exit 1
+            fi
+            count=$(find "$folder" -type f -iname '*.wav' | wc -l)
+            echo "$category WAV files: $count"
+            if [ "$count" -eq 0 ]; then
+              echo "::error::No MUSAN $category WAV files were downloaded."
+              exit 1
+            fi
+          done
 
       - name: Run preliminary experiment
         uses: matlab-actions/run-command@v3
@@ -55,12 +70,35 @@ jobs:
           path: results/preliminary_handcrafted_models.mat
           if-no-files-found: error
 
-      - name: Commit preliminary results
+      - name: Save CSV and figure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: preliminary-results
+          path: |
+            data/splits/source_split.csv
+            results/*.csv
+            results/preliminary_figures/*.png
+          if-no-files-found: error
+
+  publish-results:
+    needs: preliminary
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the tested revision
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Restore generated CSV and figure results
+        uses: actions/download-artifact@v4
+        with:
+          name: preliminary-results
+
+      - name: Publish results without overwriting concurrent changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/splits/source_split.csv
-          git add results/*.csv
-          git add results/preliminary_figures/*.png
-          git commit -m "Add preliminary handcrafted SVM and YAMNet results" || exit 0
-          git push
+          bash .github/scripts/publish-preliminary-results.sh "$GITHUB_REF_NAME"

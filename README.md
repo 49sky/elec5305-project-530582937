@@ -220,7 +220,17 @@ tests = runtests("tests");
 assertSuccess(tests)
 ```
 
-The tests generate temporary synthetic audio, check known feature values and source separation, verify training-only scaling and held-out isolation, reload saved models, and run baseline extraction/training/evaluation/plot export end to end. They require Signal Processing Toolbox and Statistics and Machine Learning Toolbox. GitHub Actions runs the same checks before downloading MUSAN, then runs the full comparison and commits the generated CSVs/PNGs. It uploads the model MAT-file as the `preliminary-handcrafted-models` workflow artifact; model files and generated WAVs are excluded from Git.
+The tests generate temporary synthetic audio, check known feature values and source separation, verify training-only scaling and held-out isolation, reload saved models, and run baseline extraction/training/evaluation/plot export end to end. They require Signal Processing Toolbox and Statistics and Machine Learning Toolbox.
+
+Result-publication regression tests use Python's standard library and temporary local Git repositories. They reproduce a branch update during an experiment, a competing binary result update, an experiment-code update, and unchanged outputs:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_publish_results.py' -v
+```
+
+GitHub Actions runs the publication and MATLAB checks before downloading MUSAN, verifies that both speech and music WAVs exist, and runs the full comparison. It uploads models as `preliminary-handcrafted-models` and CSVs/PNGs as `preliminary-results`. A separate publication job rebases the result commit onto unrelated branch updates and retries ordinary push races. If the experiment code or conflicting results changed during the run, it preserves the remote branch and leaves this run's outputs in the artifact. A failed publication job can be rerun without repeating the dataset download and experiment. Model files and generated WAVs are excluded from Git.
+
+After updating the workflow, start a new run from **Actions → Preliminary MATLAB Experiment → Run workflow → main**. Rerunning a historical failure uses that run's old revision, which may still reference the incomplete dataset mirror.
 
 ## Evaluation
 
