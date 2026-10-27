@@ -1,0 +1,61 @@
+name: One-time Actions history cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cleanup-old-runs.yml
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup:
+    if: github.repository == '49sky/elec5305-project-530582937'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Delete selected failed and cancelled runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_ids=(
+            38773760701
+            38773201636
+            38772715359
+            37907604665
+            37907599055
+            37906982654
+            37906976395
+            37906972442
+            37906365975
+            37906360498
+            37905905821
+            37905902692
+            37905897360
+            37905894161
+            37905890741
+            37905886926
+            37905883255
+            37905879540
+            37905876524
+            37905873178
+          )
+          for run_id in "${run_ids[@]}"; do
+            endpoint="repos/$GH_REPO/actions/runs/$run_id"
+            state=$(gh api "$endpoint" --jq '.status + ":" + (.conclusion // "")')
+            case "$state" in
+              completed:failure|completed:cancelled)
+                gh api --method DELETE "$endpoint"
+                echo "Deleted obsolete run $run_id ($state)"
+                ;;
+              *)
+                echo "Refusing to delete run $run_id with state $state" >&2
+                exit 1
+                ;;
+            esac
+          done
