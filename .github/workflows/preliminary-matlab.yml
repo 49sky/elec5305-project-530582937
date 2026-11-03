@@ -8,6 +8,7 @@ on:
       - ".github/scripts/**"
       - "src/**"
       - "tests/**"
+      - "config/**"
 
 permissions:
   contents: read
@@ -67,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: preliminary-handcrafted-models
-          path: results/preliminary_handcrafted_models.mat
+          path: results/development/preliminary_handcrafted_models.mat
           if-no-files-found: error
 
       - name: Save CSV and figure results
@@ -76,8 +77,19 @@ jobs:
           name: preliminary-results
           path: |
             data/splits/source_split.csv
-            results/*.csv
-            results/preliminary_figures/*.png
+            results/development/*.csv
+            results/development/*.json
+            results/development/preliminary_figures/*.png
+          if-no-files-found: error
+
+      - name: Save a small audio demonstration
+        uses: actions/upload-artifact@v4
+        with:
+          name: presence-demo
+          path: |
+            results/development/preliminary_audio/pair_01_*.wav
+            results/development/preliminary_audio/SOURCES.txt
+            results/development/preliminary_audio/attribution/
           if-no-files-found: error
 
   publish-results:
@@ -101,4 +113,4 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          bash .github/scripts/publish-preliminary-results.sh "$GITHUB_REF_NAME"
+          bash .github/scripts/publish-preliminary-results.sh "$GITHUB_REF_NAME" results/development

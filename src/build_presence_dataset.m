@@ -1,14 +1,17 @@
-function [X,metadata,featureNames,audio] = build_presence_dataset(split,partition,nPairs,fs,durationSec,smrValues)
+function [X,metadata,featureNames,audio] = build_presence_dataset(split,partition,nPairs,fs,durationSec,smrValues,startPair)
 %BUILD_PRESENCE_DATASET One central segment per source, with pure negatives.
 % Pairing is deterministic; all derivatives retain their source partition.
 validateattributes(nPairs,{'numeric'},{'scalar','integer','positive'});
+if nargin < 7, startPair = 1; end
+validateattributes(startPair,{'numeric'},{'scalar','integer','positive'});
 validateattributes(smrValues,{'numeric'},{'vector','real','finite','nonempty'});
 speechFiles = string(split.speech.(partition)(:));
 musicFiles = string(split.music.(partition)(:));
-if numel(speechFiles) < nPairs || numel(musicFiles) < nPairs
+lastPair = startPair+nPairs-1;
+if numel(speechFiles) < lastPair || numel(musicFiles) < lastPair
     error("presence:InsufficientSources", ...
-        "%s needs %d speech and music sources; found %d and %d.", ...
-        partition,nPairs,numel(speechFiles),numel(musicFiles));
+        "%s needs sources through index %d; found %d speech and %d music sources.", ...
+        partition,lastPair,numel(speechFiles),numel(musicFiles));
 end
 nRows = nPairs*(2+numel(smrValues));
 X = zeros(nRows,40);
@@ -19,7 +22,7 @@ metadata = table(repmat(string(partition),nRows,1),zeros(nRows,1), ...
     'VariableNames',{'Partition','Pair','AudioType','SpeechFile','MusicFile', ...
     'TargetSMR_dB','MeasuredSMR_dB','SpeechPresent','MusicPresent'});
 row = 0;
-for pair = 1:nPairs
+for pair = startPair:lastPair
     speech = read_audio_segment(speechFiles(pair),fs,durationSec);
     music = read_audio_segment(musicFiles(pair),fs,durationSec);
     for kind = 1:(2+numel(smrValues))

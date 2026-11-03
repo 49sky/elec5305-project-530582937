@@ -1,0 +1,24 @@
+{
+  "revision": "5fc45bf4b1e2bfe2eec68b9f743d41e8f6c280ed",
+  "workflow_run": 40511456636,
+  "seed": 530582937,
+  "train_pairs": 10,
+  "validation_pairs": 10,
+  "test_pairs": 10,
+  "sample_rate": 16000,
+  "duration_seconds": 2,
+  "smr_db": [
+    -10,
+    0,
+    10
+  ],
+  "svm_selection": "validation positive-class F1",
+  "svm_C": [
+    0.01,
+    0.1,
+    1,
+    10
+  ],
+  "svm_margin_threshold": 0,
+  "yamnet_threshold": 0.5
+}

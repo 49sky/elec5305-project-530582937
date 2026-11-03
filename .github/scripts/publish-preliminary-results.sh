@@ -10,8 +10,15 @@ fi
 git check-ref-format "refs/heads/$branch"
 base_revision=$(git rev-parse HEAD)
 remote_ref="refs/remotes/origin/$branch"
+result_root=${2:-results}
+if [[ ! "$result_root" =~ ^results(/[A-Za-z0-9_-]+)*$ ]]; then
+  echo "Results must be in a directory under results/." >&2
+  exit 1
+fi
 
-git add -- data/splits/source_split.csv results/*.csv results/preliminary_figures/*.png
+shopt -s nullglob
+outputs=(data/splits/source_split.csv "$result_root"/*.csv "$result_root"/*.json "$result_root"/preliminary_figures/*.png)
+git add -- "${outputs[@]}"
 if git diff --cached --quiet; then
   echo "Preliminary results are already up to date."
   exit 0
@@ -21,7 +28,7 @@ git commit -m "Add preliminary handcrafted SVM and YAMNet results"
 for attempt in 1 2 3; do
   git fetch origin "refs/heads/$branch:$remote_ref"
   if ! git diff --quiet "$base_revision" "$remote_ref" -- \
-      src tests .github/workflows/preliminary-matlab.yml; then
+      src tests config .github/workflows/preliminary-matlab.yml; then
     echo "::warning::Experiment code changed during this run; results remain available in the preliminary-results artifact."
     exit 0
   fi

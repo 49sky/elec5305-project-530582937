@@ -1,9 +1,11 @@
-function [models,tuning] = train_handcrafted_baseline(X,labels,trainRows,validationRows,boxConstraints)
-%TRAIN_HANDCRAFTED_BASELINE Independent linear SVMs, validation-only C choice.
-% Standardisation is fitted by fitcsvm using training rows only. No random
-% segment-level CV or test data enter training or hyperparameter selection.
-if nargin < 5
-    boxConstraints = [0.01 0.1 1 10];
+function [models,tuning] = train_handcrafted_baseline(X,labels,trainRows,validationRows,boxConstraints,balanceClasses)
+%TRAIN_HANDCRAFTED_BASELINE Shared training scaling and validation-only C choice.
+if nargin < 5, boxConstraints = [0.01 0.1 1 10]; end
+if nargin < 6, balanceClasses = false; end
+if balanceClasses
+    prior = "uniform"; variant = "SVM balanced";
+else
+    prior = "empirical"; variant = "SVM unweighted";
 end
 validateattributes(X,{'numeric'},{'2d','real','finite','nonempty'});
 validateattributes(labels,{'numeric','logical'},{'size',[size(X,1),2],'binary'});
@@ -15,24 +17,34 @@ assert(any(trainRows) && any(validationRows) && ~any(trainRows & validationRows)
 boxConstraints = sort(unique(boxConstraints));
 targets = ["Speech","Music"];
 models = struct;
+models.Mean = mean(X(trainRows,:),1);
+models.Scale = std(X(trainRows,:),0,1);
+models.Scale(models.Scale==0) = 1;
+models.BalanceClasses = balanceClasses;
+scaled = (X-models.Mean)./models.Scale;
 tuning = table;
 for target = 1:2
     assert(numel(unique(labels(trainRows,target))) == 2, ...
         "Each training target needs positive and negative examples.");
-    bestF1 = -Inf;
+    assert(numel(unique(labels(validationRows,target))) == 2, ...
+        "Each validation target needs positive and negative examples.");
+    bestScore = -Inf;
     bestIndex = 0;
     for c = 1:numel(boxConstraints)
-        model = fitcsvm(X(trainRows,:),logical(labels(trainRows,target)), ...
-            "KernelFunction","linear","KernelScale",1,"Standardize",true, ...
-            "ClassNames",[false; true],"BoxConstraint",boxConstraints(c));
-        prediction = predict(model,X(validationRows,:));
+        % Manual scaling keeps the two variants identical before weighting.
+        model = fitcsvm(scaled(trainRows,:),logical(labels(trainRows,target)), ...
+            "KernelFunction","linear","KernelScale",1,"Standardize",false, ...
+            "Prior",prior,"ClassNames",[false; true],"BoxConstraint",boxConstraints(c));
+        prediction = predict(model,scaled(validationRows,:));
         m = presence_metrics(labels(validationRows,target),prediction);
-        candidate = table(targets(target),boxConstraints(c),m.F1,false, ...
-            'VariableNames',{'Target','BoxConstraint','ValidationF1','Selected'});
+        candidate = table(variant,targets(target),boxConstraints(c), ...
+            m.BalancedAccuracy,m.F1,m.Specificity,false, ...
+            'VariableNames',{'Variant','Target','BoxConstraint', ...
+            'ValidationBalancedAccuracy','ValidationF1','ValidationSpecificity','Selected'});
         tuning = [tuning; candidate]; %#ok<AGROW>
         % Strict comparison breaks ties in favour of the smallest C.
-        if m.F1 > bestF1
-            bestF1 = m.F1;
+        if m.BalancedAccuracy > bestScore
+            bestScore = m.BalancedAccuracy;
             models.(targets(target)) = compact(model);
             bestIndex = height(tuning);
         end

@@ -96,6 +96,23 @@ class PublishResultsTest(unittest.TestCase):
         self.assertEqual(self.git(self.origin, "rev-parse", "main"), before)
         self.assertEqual(self.git(self.worker, "rev-parse", "HEAD"), before)
 
+    def test_protocol_change_keeps_results_in_artifact(self):
+        self.write(self.worker, "results/metrics.csv", "F1\n0.9\n")
+        update = self.remote_change("config/final_protocol.json", '{"TestPairs":50}\n')
+        self.assertIn("Experiment code changed", self.publish())
+        self.assertEqual(self.git(self.origin, "rev-parse", "main"), update)
+
+    def test_development_outputs_do_not_change_original_results(self):
+        self.write(self.worker, "results/development/metrics.csv", "F1\n0.9\n")
+        self.write(self.worker, "results/development/run_manifest.json", '{"Seed":1}\n')
+        self.write(self.worker, "results/archive/metrics.csv", "Original snapshot\n")
+        subprocess.run(["bash", str(SCRIPT), "main", "results/development"],
+                       cwd=self.worker, check=True, capture_output=True, text=True)
+        self.assertEqual(self.git(self.origin, "show", "main:results/metrics.csv"), "F1\n0.5")
+        self.assertEqual(self.git(self.origin, "show", "main:results/development/metrics.csv"), "F1\n0.9")
+        self.assertEqual(self.git(self.origin, "show", "main:results/development/run_manifest.json"), '{"Seed":1}')
+        self.assertFalse(self.git(self.origin, "ls-tree", "main", "results/archive/metrics.csv"))
+
 
 if __name__ == "__main__":
     unittest.main()
