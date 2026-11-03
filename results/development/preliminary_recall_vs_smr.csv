@@ -1,0 +1,16 @@
+System,SMR_dB,Mixtures,SpeechRecall,MusicRecall,WeakerSource,WeakerSourceCount,WeakerSourceRecall
+Always present,-10,10,1,1,Speech,10,1
+Always present,0,10,1,1,None,0,NaN
+Always present,10,10,1,1,Music,10,1
+SVM unweighted,-10,10,0.7,0.9,Speech,10,0.7
+SVM unweighted,0,10,0.8,0.9,None,0,NaN
+SVM unweighted,10,10,0.8,0.8,Music,10,0.8
+SVM balanced,-10,10,0.5,0.9,Speech,10,0.5
+SVM balanced,0,10,0.7,0.9,None,0,NaN
+SVM balanced,10,10,0.9,0.8,Music,10,0.8
+YAMNet fixed,-10,10,0,1,Speech,10,0
+YAMNet fixed,0,10,0,1,None,0,NaN
+YAMNet fixed,10,10,0.6,0.4,Music,10,0.4
+YAMNet validation,-10,10,0,1,Speech,10,0
+YAMNet validation,0,10,0,1,None,0,NaN
+YAMNet validation,10,10,0.8,0.8,Music,10,0.8

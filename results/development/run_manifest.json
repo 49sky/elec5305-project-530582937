@@ -1,0 +1,1158 @@
+{
+  "Configuration": {
+    "SplitFile": "data/splits/source_split.mat",
+    "ResultsDir": "results/development",
+    "Phase": "development",
+    "TrainPairs": 10,
+    "ValidationPairs": 10,
+    "TestPairs": 10,
+    "TestStartIndex": 1,
+    "SampleRate": 16000,
+    "DurationSec": 2,
+    "SMRValues": [
+      -10,
+      0,
+      10
+    ],
+    "BoxConstraints": [
+      0.01,
+      0.1,
+      1,
+      10
+    ],
+    "YAMNetThresholds": [
+      0,
+      0.05,
+      0.1,
+      0.15000000000000002,
+      0.2,
+      0.25,
+      0.30000000000000004,
+      0.35000000000000003,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.64999999999999991,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1
+    ],
+    "UseYAMNet": true,
+    "MakePlots": true,
+    "SourceCredit": "MUSAN: Snyder, Chen and Povey (2015); https://www.openslr.org/17/ ; CC BY 4.0: https://creativecommons.org/licenses/by/4.0/",
+    "Seed": 5.30582937E+8,
+    "YAMNetThreshold": 0.5,
+    "SVMDecisionThreshold": 0,
+    "SelectionMetric": "BalancedAccuracy",
+    "SelectedYAMNetThresholds": [
+      0.05,
+      0.15000000000000002
+    ],
+    "SystemNames": [
+      "Always present",
+      "SVM unweighted",
+      "SVM balanced",
+      "YAMNet fixed",
+      "YAMNet validation"
+    ]
+  },
+  "MATLABVersion": "26.2.0.3433840 (R2026b) Update 1",
+  "Toolboxes": [
+    {
+      "Name": "Audio Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "DSP System Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Deep Learning Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "MATLAB",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Signal Processing Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Statistics and Machine Learning Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "11-Jun-2026"
+    }
+  ],
+  "CodeRevision": "3fd2b07f4b58551eec83a3994a176cfa28807d72",
+  "CreatedUTC": "03-Nov-2026 04:35:23",
+  "Sources": [
+    {
+      "Partition": "train",
+      "Pair": 1,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0015.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 1,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0021.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0015.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0021.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0015.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0021.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0015.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0021.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 2,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0215.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 2,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0070.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0215.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0070.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0215.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0070.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0215.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0070.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 3,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0143.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 3,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0082.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0143.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0082.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0143.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0082.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0143.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0082.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 4,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0212.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 4,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0032.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0212.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0032.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0212.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0032.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0212.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0032.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 5,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0006.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 5,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0072.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0006.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0072.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0006.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0072.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0006.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0072.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 6,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0104.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 6,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0062.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0104.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0062.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0104.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0062.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0104.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0062.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 7,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0028.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 7,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0067.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0028.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0067.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0028.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0067.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0028.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0067.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 8,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0111.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 8,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0003.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0111.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0003.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0111.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0003.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0111.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0003.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 9,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0105.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 9,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0028.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0105.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0028.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0105.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0028.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0105.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0028.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 10,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0011.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "train",
+      "Pair": 10,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0180.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0011.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0180.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0011.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0180.wav"
+    },
+    {
+      "Partition": "train",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0011.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0180.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 1,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0066.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 1,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0100.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0066.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0100.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0066.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0100.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0066.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0100.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 2,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0147.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 2,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0085.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0147.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0085.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0147.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0085.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0147.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0085.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 3,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0017.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 3,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0078.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0017.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0078.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0017.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0078.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0017.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0078.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 4,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0108.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 4,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma/music-fma-0095.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0108.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0095.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0108.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0095.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0108.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0095.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 5,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0168.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 5,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0087.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0168.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0087.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0168.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0087.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0168.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0087.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 6,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0198.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 6,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma/music-fma-0001.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0198.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0001.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0198.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0001.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0198.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0001.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 7,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0155.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 7,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0042.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0155.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0042.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0155.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0042.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0155.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0042.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 8,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0149.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 8,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0084.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0149.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0084.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0149.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0084.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0149.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0084.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 9,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0082.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 9,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0094.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0082.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0094.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0082.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0094.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0082.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0094.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 10,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0017.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "validation",
+      "Pair": 10,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0090.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0017.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0090.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0017.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0090.wav"
+    },
+    {
+      "Partition": "validation",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0017.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0090.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 1,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0156.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 1,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0050.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0156.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0050.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0156.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0050.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 1,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0156.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0050.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 2,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0059.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 2,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0057.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0059.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0057.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0059.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0057.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 2,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0059.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0057.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 3,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0162.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 3,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0051.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0162.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0051.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0162.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0051.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 3,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0162.wav",
+      "MusicFile": "data/musan/music/fma-western-art/music-fma-wa-0051.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 4,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0073.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 4,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma/music-fma-0078.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0073.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0078.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0073.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0078.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 4,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0073.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0078.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 5,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0098.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 5,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0064.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0098.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0064.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0098.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0064.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 5,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0098.wav",
+      "MusicFile": "data/musan/music/rfm/music-rfm-0064.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 6,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0196.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 6,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0002.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0196.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0002.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0196.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0002.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 6,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0196.wav",
+      "MusicFile": "data/musan/music/hd-classical/music-hd-0002.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 7,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0138.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 7,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma/music-fma-0059.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0138.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0059.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0138.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0059.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 7,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0138.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0059.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 8,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0125.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 8,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0188.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0125.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0188.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0125.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0188.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 8,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0125.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0188.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 9,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0066.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 9,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0097.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0066.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0097.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0066.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0097.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 9,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/librivox/speech-librivox-0066.wav",
+      "MusicFile": "data/musan/music/jamendo/music-jamendo-0097.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 10,
+      "AudioType": "speech_only",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0110.wav",
+      "MusicFile": ""
+    },
+    {
+      "Partition": "test",
+      "Pair": 10,
+      "AudioType": "music_only",
+      "SpeechFile": "",
+      "MusicFile": "data/musan/music/fma/music-fma-0103.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0110.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0103.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0110.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0103.wav"
+    },
+    {
+      "Partition": "test",
+      "Pair": 10,
+      "AudioType": "mixture",
+      "SpeechFile": "data/musan/speech/us-gov/speech-us-gov-0110.wav",
+      "MusicFile": "data/musan/music/fma/music-fma-0103.wav"
+    }
+  ]
+}
