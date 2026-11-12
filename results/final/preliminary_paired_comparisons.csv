@@ -1,0 +1,5 @@
+System,Reference,Target,Difference,Lower95,Upper95,SourcePairs,Resamples
+SVM balanced,SVM unweighted,Speech,0.29875,0.25,0.340625,50,2000
+YAMNet validation,YAMNet fixed,Speech,0.09875,0.0812499999999999,0.1175,50,2000
+SVM balanced,SVM unweighted,Music,0.04875,0.00250000000000006,0.10125,50,2000
+YAMNet validation,YAMNet fixed,Music,0.07,0.055,0.08375,50,2000

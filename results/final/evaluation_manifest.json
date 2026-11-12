@@ -1,0 +1,12 @@
+{
+  "PredictionFile": "results/final/preliminary_presence_predictions.csv",
+  "SourceCodeRevision": "0c6afb50819cc59d2779f6e879e21cb49471a556",
+  "EvaluationCodeRevision": "0c6afb50819cc59d2779f6e879e21cb49471a556",
+  "Resamples": 2000,
+  "Seed": 5.30582937E+8,
+  "ConfidenceLevel": 0.95,
+  "Unit": "source pair",
+  "Method": "percentile",
+  "SourcePairs": 50,
+  "CreatedUTC": "12-Nov-2026 13:46:38"
+}
