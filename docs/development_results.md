@@ -60,6 +60,19 @@ resamples. They keep all observations from a source pair together and hold
 the fitted models fixed. The intervals cover test-pair variation, with no
 claim about variation from retraining or selecting thresholds again.
 
+The paired balanced-accuracy differences, in percentage points, are:
+
+| Modification | Speech difference (95% interval) | Music difference (95% interval) |
+| --- | ---: | ---: |
+| Balanced minus unweighted SVM | -5.00 (-23.75 to +12.50) | +13.75 (-1.25 to +30.00) |
+| Selected minus fixed YAMNet threshold | +2.50 (0.00 to +6.25) | +5.00 (+1.25 to +8.75) |
+
+Both SVM intervals include zero. The development data show a music improvement
+in the point estimate, with considerable uncertainty across source pairs. The
+threshold comparison is more consistent for music on these pairs, but remains
+conditional on the fitted models and thresholds selected from ten validation
+pairs. The final set will provide a separate evaluation.
+
 `preliminary_error_cases.csv` lists labelled errors, source paths and saved
 audio paths. Pair 1 is available in the small audio artifact: the unweighted
 SVM marks its music-only clip as speech, while the balanced SVM rejects speech

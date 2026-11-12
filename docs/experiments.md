@@ -62,6 +62,12 @@ This differs from the independent sigmoid head in the TensorFlow reference.
 The experiment keeps the MATLAB model and records its output layer in new runs.
 The final source selection, SMRs and model-selection rules remain fixed.
 
+The [evaluation check run](https://github.com/49sky/elec5305-project-530582937/actions/runs/43221702648)
+passed all 13 MATLAB tests and seven publication tests. It regenerated the
+intervals and error-case table from saved predictions, with no MUSAN or YAMNet
+download. The paired SVM intervals include zero for both targets; the point
+estimates alone are insufficient to establish a consistent weighting benefit.
+
 ## Reserved final experiment
 
 [`config/final_protocol.json`](../config/final_protocol.json) records the planned
@@ -75,3 +81,11 @@ comparison. Use its results to answer the question and describe limitations,
 without retuning on that test set. The final report, GitHub Site and video are
 still to be prepared. The video should demonstrate a few representative clips,
 including a false alarm or missed weak source, and explain the processing.
+
+## Final run started
+
+The [reserved final experiment](https://github.com/49sky/elec5305-project-530582937/actions/runs/43222393874)
+was started on 12 November with the fixed protocol. It uses 900 training,
+270 validation and 450 test examples from 100, 30 and 50 source pairs,
+respectively. The test pairs are indices 11-60 of the archived split. Results
+will be interpreted after the experiment and publication jobs complete.
