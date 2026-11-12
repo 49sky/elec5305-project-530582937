@@ -16,6 +16,8 @@ arguments
     options.YAMNetThresholds (1,:) double {mustBeFinite,mustBeNonnegative} = 0:0.05:1
     options.UseYAMNet (1,1) logical = true
     options.MakePlots (1,1) logical = true
+    options.BootstrapResamples (1,1) double {mustBeInteger,mustBePositive} = 2000
+    options.BootstrapSeed (1,1) double {mustBeInteger,mustBeNonnegative} = 530582937
     options.SourceCredit (1,1) string = "MUSAN: Snyder, Chen and Povey (2015); https://www.openslr.org/17/ ; CC BY 4.0: https://creativecommons.org/licenses/by/4.0/"
 end
 previousRng = rng;
@@ -79,8 +81,14 @@ systemNames = ["Always present","SVM unweighted","SVM balanced"];
 allPredictions = cat(3,true(size(svmPredictions)),svmPredictions,balancedPredictions);
 yamnetThresholds = []; thresholdTuning = table;
 validationScores = table;
+yamnetInfo = struct('Implementation',"disabled");
 if options.UseYAMNet
     [net,classNames] = load_yamnet;
+    assert(isa(net.Layers(end),'nnet.cnn.layer.SoftmaxLayer'), ...
+        'presence:YAMNetOutput','Expected the MATLAB YAMNet softmax head used in the development comparison.');
+    yamnetInfo = struct('Implementation',"MATLAB audioPretrainedNetwork", ...
+        'OutputLayerClass',string(class(net.Layers(end))), ...
+        'OutputNames',string(net.OutputNames),'ClassCount',numel(classNames));
     validationYAMNet = zeros(numel(validationAudio),2);
     for row = 1:numel(validationAudio)
         [validationYAMNet(row,1),validationYAMNet(row,2)] = ...
@@ -150,6 +158,7 @@ configuration.SVMDecisionThreshold = 0;
 configuration.SelectionMetric = "BalancedAccuracy";
 configuration.SelectedYAMNetThresholds = yamnetThresholds;
 configuration.SystemNames = systemNames;
+configuration.YAMNet = yamnetInfo;
 matlabVersion = version;
 toolboxes = ver;
 save(fullfile(options.ResultsDir,"preliminary_handcrafted_models.mat"), ...
@@ -162,6 +171,8 @@ manifest = struct('Configuration',configuration,'MATLABVersion',matlabVersion, .
 fid = fopen(fullfile(options.ResultsDir,"run_manifest.json"),'w');
 assert(fid~=-1,"Could not write the run manifest.");
 fprintf(fid,'%s\n',jsonencode(manifest,PrettyPrint=true)); fclose(fid);
+[intervals,comparisons] = review_presence_results(options.ResultsDir, ...
+    Resamples=options.BootstrapResamples,Seed=options.BootstrapSeed,MakePlot=options.MakePlots);
 if options.MakePlots
     plot_presence_comparison(metrics,recallBySMR,figureDir);
     plot_mixtures(predictions,audio,options.SampleRate,options.SMRValues,figureDir);
@@ -179,6 +190,7 @@ end
 disp(metrics); disp(recallBySMR);
 artifacts = struct("Predictions",predictions,"Metrics",metrics,"RecallBySMR",recallBySMR, ...
     "Tuning",tuning,"Models",models,"BalancedModels",balancedModels, ...
+    "Intervals",intervals,"Comparisons",comparisons, ...
     "YAMNetThresholds",yamnetThresholds,"ThresholdTuning",thresholdTuning,"FeatureNames",featureNames);
 end
 
@@ -247,7 +259,8 @@ summary = array2table([smrValues(:),values],'VariableNames', ...
 end
 
 function plot_mixtures(metadata,audio,fs,smrValues,figureDir)
-for pair = unique(metadata.Pair)'
+pairs = unique(metadata.Pair);
+for pair = pairs(1:min(3,numel(pairs)))'
     fig = figure("Color","w","Visible","off", ...
         "Position",[100 100 max(900,300*numel(smrValues)) 560]);
     layout = tiledlayout(2,numel(smrValues),"TileSpacing","compact","Padding","compact");

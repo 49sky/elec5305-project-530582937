@@ -1,6 +1,7 @@
 # Dataset files
 data/musan/
 data/splits/*.mat
+results/**/source_split.mat
 
 # Generated audio
 results/**/preliminary_audio/*.wav

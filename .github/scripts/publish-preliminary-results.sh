@@ -23,18 +23,18 @@ if git diff --cached --quiet; then
   echo "Preliminary results are already up to date."
   exit 0
 fi
-git commit -m "Add preliminary handcrafted SVM and YAMNet results"
+git commit -m "Add speech/music results in $result_root"
 
 for attempt in 1 2 3; do
   git fetch origin "refs/heads/$branch:$remote_ref"
   if ! git diff --quiet "$base_revision" "$remote_ref" -- \
-      src tests config .github/workflows/preliminary-matlab.yml; then
-    echo "::warning::Experiment code changed during this run; results remain available in the preliminary-results artifact."
+      src tests config .github/workflows/preliminary-matlab.yml .github/scripts; then
+    echo "::warning::Experiment code changed during this run; results remain available in the results artifact."
     exit 0
   fi
   if ! git rebase "$remote_ref"; then
     git rebase --abort
-    echo "::warning::Results changed concurrently; keeping the remote results. This run's outputs remain available in the preliminary-results artifact."
+    echo "::warning::Results changed concurrently; keeping the remote results. This run's outputs remain available in the results artifact."
     exit 0
   fi
   if git push origin "HEAD:refs/heads/$branch"; then
@@ -44,5 +44,5 @@ for attempt in 1 2 3; do
   echo "Push attempt $attempt failed; checking the branch again."
 done
 
-echo "Unable to publish results after three attempts; download the preliminary-results artifact." >&2
+echo "Unable to publish results after three attempts; download the results artifact." >&2
 exit 1

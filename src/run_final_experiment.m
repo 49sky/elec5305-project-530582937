@@ -2,10 +2,12 @@ function result = run_final_experiment(options)
 %RUN_FINAL_EXPERIMENT Preview the fixed source selection before running it.
 arguments
     options.DryRun (1,1) logical = true
+    options.ResultsDir (1,1) string = ""
 end
 root = fileparts(fileparts(mfilename('fullpath')));
 previous = pwd; restore = onCleanup(@()cd(previous)); cd(root);
 p = jsondecode(fileread(fullfile('config','final_protocol.json')));
+if strlength(options.ResultsDir)>0, p.ResultsDir = options.ResultsDir; end
 archive = fullfile('results','archive','preliminary-2026-10-27');
 original = read_split(fullfile(archive,'source_split.csv'));
 current = read_split(fullfile('data','splits','source_split.csv'));
@@ -39,6 +41,8 @@ if options.DryRun
     disp(groupsummary(selected,["Partition","Type"]));
     return
 end
+assert(~isfile(fullfile(p.ResultsDir,'preliminary_presence_predictions.csv')), ...
+    "presence:FinalResultsExist","Final predictions already exist. Review the saved run rather than rerunning the test set.");
 validate_source_split(split);
 if ~isfolder(p.ResultsDir), mkdir(p.ResultsDir); end
 splitFile = fullfile(p.ResultsDir,'source_split.mat');
@@ -48,7 +52,8 @@ result = preliminary_mixture_demo(Phase="final",SplitFile=splitFile, ...
     ValidationPairs=p.ValidationPairs,TestPairs=p.TestPairs, ...
     TestStartIndex=p.TestStartIndex,SampleRate=p.SampleRate,DurationSec=p.DurationSec, ...
     SMRValues=p.SMRValues(:)',BoxConstraints=p.BoxConstraints(:)', ...
-    YAMNetThresholds=p.YAMNetThresholds(:)');
+    YAMNetThresholds=p.YAMNetThresholds(:)', ...
+    BootstrapResamples=p.BootstrapResamples,BootstrapSeed=p.BootstrapSeed);
 end
 
 function t = read_split(file)

@@ -113,6 +113,17 @@ class PublishResultsTest(unittest.TestCase):
         self.assertEqual(self.git(self.origin, "show", "main:results/development/run_manifest.json"), '{"Seed":1}')
         self.assertFalse(self.git(self.origin, "ls-tree", "main", "results/archive/metrics.csv"))
 
+    def test_final_outputs_leave_development_results_unchanged(self):
+        self.remote_change("results/development/metrics.csv", "BalancedAccuracy\n0.7\n")
+        self.write(self.worker, "results/final/metrics.csv", "BalancedAccuracy\n0.8\n")
+        self.write(self.worker, "results/final/evaluation_manifest.json", '{"SourcePairs":50}\n')
+        subprocess.run(["bash", str(SCRIPT), "main", "results/final"],
+                       cwd=self.worker, check=True, capture_output=True, text=True)
+        self.assertEqual(self.git(self.origin, "show", "main:results/development/metrics.csv"),
+                         "BalancedAccuracy\n0.7")
+        self.assertEqual(self.git(self.origin, "show", "main:results/final/metrics.csv"),
+                         "BalancedAccuracy\n0.8")
+
 
 if __name__ == "__main__":
     unittest.main()

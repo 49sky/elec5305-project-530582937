@@ -22,13 +22,19 @@ controlled SMR sweep asks how performance changes when both source tracks are
 present. This is a difference in the evaluation question; it is not evidence
 that our project introduces overlap detection to the literature.
 
-YAMNet [3] provides a contrasting representation learned from AudioSet. It uses
-log-mel inputs and a MobileNet architecture to score 521 event classes. We use
-the Speech and Music outputs averaged over each excerpt. Its broad training
-coverage is useful, but its output scores are not calibrated specifically for
-our mixtures. Comparing fixed and validation-selected thresholds helps separate
-score quality from the chosen decision boundary. YAMNet is a reference model;
-we do not claim it represents the current best audio classifier.
+YAMNet [3] provides a representation learned from AudioSet using log-mel
+inputs and MobileNet. This project uses MathWorks' `audioPretrainedNetwork`
+implementation [5], whose documented output is softmax. TensorFlow's reference
+uses independent sigmoid outputs. The results here describe the MATLAB model.
+
+Speech and Music scores are averaged over each excerpt. Softmax makes classes
+compete and constrains simultaneous detection at a 0.5 threshold: the two mean
+scores sum to at most one. Lower validation-selected thresholds allow both
+outputs to be accepted. This motivates the threshold comparison, while other
+factors, including masking and domain differences, can also affect scores.
+Weights and output layers stay fixed. New runs record and check the output-layer
+type. The model is a reference classifier; no current state-of-the-art claim is
+made.
 
 ## Controlled weighting comparison
 
@@ -59,8 +65,18 @@ classes and show the counts, so rare negatives remain visible.
 Source files are split before extracting central excerpts. All settings are
 chosen using training/validation data. Development is restricted to the ten
 test pairs already inspected; the final protocol reserves indices 11-60.
-Each pair contributes related observations across SMRs. Future confidence
-intervals should therefore resample whole pairs. They are not implemented yet.
+Each pair contributes related observations across SMRs. Confidence intervals
+therefore resample complete pairs, including their pure-source controls. For
+each of 2,000 draws, the same sampled pair indices are used for every system.
+The 2.5th and 97.5th percentiles give the reported 95% intervals for balanced
+accuracy, positive-class F1 and paired balanced-accuracy differences. This is
+the percentile bootstrap [6], applied to pair-level confusion counts.
+
+These intervals describe variation across the selected test pairs with models
+and thresholds held fixed. They do not include retraining or validation-selection
+uncertainty. Ten development pairs provide limited evidence; the final protocol
+uses 50 unused pairs. Repeated speakers or artists may create dependence beyond
+the file pairs.
 
 File-level separation does not guarantee new speakers, artists or recording
 conditions. Labels describe the source tracks included, rather than an exhaustive
@@ -81,3 +97,10 @@ natural, uncontrolled mixtures are outside the current evaluation.
    [Official repository](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet).
 4. MathWorks, "fitcsvm," MATLAB documentation.
    [Class priors, weighting and standardisation](https://www.mathworks.com/help/stats/fitcsvm.html).
+5. MathWorks, "audioPretrainedNetwork," MATLAB documentation.
+   [MATLAB YAMNet architecture](https://www.mathworks.com/help/audio/ref/audiopretrainednetwork.html).
+   TensorFlow's [activation setting](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/params.py)
+   defines the reference sigmoid output.
+6. MathWorks, "bootci," MATLAB documentation.
+   [Bootstrap sampling and percentile intervals](https://www.mathworks.com/help/stats/bootci.html).
+   The implementation here samples source-pair counts directly.

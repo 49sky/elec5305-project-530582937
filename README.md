@@ -12,7 +12,7 @@ The project is implemented primarily in MATLAB.
 
 The original preliminary run is preserved in [results/archive/preliminary-2026-10-27](results/archive/preliminary-2026-10-27/). The current experiment adds class-balanced evaluation, a controlled SVM weighting comparison, and validation-selected YAMNet thresholds. New development results are written to `results/development/`; the reserved final test set is separate.
 
-[Method notes and references](docs/methods.md) describe the design. The [experiment log](docs/experiments.md) records what has been tested and what remains to do.
+[Method notes and references](docs/methods.md) describe the design. The [development analysis](docs/development_results.md) explains the measured changes and remaining errors. The [experiment log](docs/experiments.md) records what has been tested and what remains to do.
 
 ## Speech-to-Music Ratio
 
@@ -96,6 +96,8 @@ Each detector selects `BoxConstraint` from `[0.01 0.1 1 10]` using validation ba
 
 The second system uses pretrained YAMNet through MATLAB Audio Toolbox.
 
+The project uses the MATLAB `audioPretrainedNetwork("yamnet")` model, whose documented output head is softmax. TensorFlow's reference YAMNet instead uses independent sigmoid outputs. Here, classes compete for a total score of one: two mean scores cannot both exceed 0.5. The fixed-threshold reference has this limitation. The output head and weights stay unchanged, and new runs record the layer type. See the [model documentation](https://www.mathworks.com/help/audio/ref/audiopretrainednetwork.html).
+
 YAMNet's pretrained weights are frozen. Mean Speech and Music scores are extracted separately for validation and test excerpts. We retain the fixed 0.5 rule and compare it with thresholds selected independently for speech and music from `0:0.05:1` using validation balanced accuracy. Ties favour the candidate nearest 0.5, then the smaller threshold. Test scores and labels do not enter threshold selection.
 
 ## Preliminary Implementation
@@ -139,6 +141,7 @@ Routine development runs are restricted to the first ten test sources of each ty
 ├── config/final_protocol.json
 ├── docs/
 │   ├── methods.md
+│   ├── development_results.md
 │   └── experiments.md
 ├── src/
 │   ├── create_source_split.m
@@ -154,6 +157,8 @@ Routine development runs are restricted to the first ten test sources of each ty
 │   ├── plot_presence_comparison.m
 │   ├── validate_source_split.m
 │   ├── select_presence_thresholds.m
+│   ├── bootstrap_presence_metrics.m
+│   ├── review_presence_results.m
 │   ├── presence_demo.m
 │   ├── run_final_experiment.m
 │   └── preliminary_mixture_demo.m
@@ -202,7 +207,15 @@ The final run is a separate, explicit operation after the development comparison
 run = run_final_experiment(DryRun=false);
 ```
 
-That command needs MUSAN locally and writes to `results/final/`. The routine GitHub workflow runs only the small development experiment.
+That command needs MUSAN locally and writes to `results/final/`. It refuses to overwrite an existing final prediction table. Routine push checks use synthetic audio and saved development predictions. Audio experiments are separate manual workflow runs; select `development` or `final`.
+
+For a deliberate reproduction, keep the same protocol and use a new output directory:
+
+```matlab
+run = run_final_experiment(DryRun=false, ResultsDir="results/final_reproduction");
+```
+
+`ResultsDir` changes only the output location; source selections, SMRs and selection rules still come from the frozen protocol.
 
 Each requested partition must contain at least the specified number of sources of both types. A short or silent central segment raises an error identifying the issue rather than silently changing the selected corpus. The first YAMNet run may download its pretrained model from MathWorks and requires internet access.
 
@@ -231,11 +244,15 @@ The run saves the following under `ResultsDir` (default `results/development/`):
 | `preliminary_yamnet_validation_scores.csv` | Validation metadata and raw YAMNet scores |
 | `preliminary_yamnet_thresholds.csv` | Validation scores for each candidate threshold and the selected rules |
 | `run_manifest.json` | Configuration, source selections, code revision and software versions |
+| `preliminary_metric_intervals.csv` | 95% source-pair percentile intervals for balanced accuracy and F1 |
+| `preliminary_paired_comparisons.csv` | Paired balanced-accuracy differences for the two controlled modifications |
+| `preliminary_error_cases.csv` | Labelled mistakes and source/audio paths for inspection |
+| `evaluation_manifest.json` | Evaluation settings, input model-run revision and evaluation code revision |
 | `preliminary_recall_vs_smr.csv` | Test mixture speech/music/weak-source recall and sample counts at each SMR |
 | `preliminary_results.csv` | Original mixture-only result table, extended with test labels and baseline predictions |
 | `preliminary_yamnet_summary.csv` | Original mean/std YAMNet score summary for test mixtures (when enabled) |
 | `preliminary_audio/*.wav` | Test mixtures and the first pair's pure-source excerpts; source credits accompany the demo |
-| `preliminary_figures/*.png` | Waveforms/spectrograms, metric comparisons, confusion matrices and SMR curves |
+| `preliminary_figures/*.png` | First three pairs' waveforms/spectrograms, metric comparisons, confusion matrices, SMR curves and confidence intervals |
 
 To reproduce predictions from a saved baseline:
 
@@ -283,11 +300,22 @@ Result-publication regression tests use Python's standard library and temporary 
 python3 -m unittest discover -s tests -p 'test_publish_results.py' -v
 ```
 
-GitHub Actions runs the publication and MATLAB checks before downloading MUSAN on its temporary runner, verifies that speech and music WAVs exist, and runs the development comparison. It uploads models as `preliminary-handcrafted-models`, CSVs/PNGs/manifest as `preliminary-results`, and a small audio example as `presence-demo`. MATLAB tests create temporary synthetic fixtures and do not download MUSAN. Model files and generated WAVs are excluded from Git; artifacts are subject to GitHub's retention period and can be regenerated.
+Pushes run the Python and MATLAB tests and review the saved development predictions. This path uses synthetic fixtures and CSVs, so it does not download MUSAN or load YAMNet. It publishes the added intervals, paired comparisons, error-case table and confidence plot. Existing model decisions and the source run manifest are preserved.
 
-A separate publication job updates only development outputs and the source-split CSV. It preserves the historical results, rebases onto unrelated branch updates and retries ordinary push races. If experiment code, the protocol or conflicting results changed during the run, the outputs remain in the artifact. Publication can be retried without rerunning the experiment.
+For an audio experiment, open **Actions → MATLAB Presence Experiment → Run workflow → main**. Select `development` for the small comparison or `final` for the fixed final protocol. The runner downloads MUSAN and the pretrained model, runs the checks and selected experiment, and saves its outputs. Final runs use the archived source split and test pairs 11–60; the workflow refuses to overwrite existing final predictions.
 
-After updating the workflow, start a new run from **Actions → Preliminary MATLAB Experiment → Run workflow → main**. Rerunning a historical failure uses that run's old revision, which may still reference the incomplete dataset mirror.
+Development artifacts are `preliminary-handcrafted-models`, `preliminary-results` and `presence-demo`. Final runs use `final-handcrafted-models`, `final-results` and `presence-demo`. The final demo contains the first reserved pair at seven SMRs plus its pure-source clips. Preserve the source credits. Models and generated WAVs stay out of Git and can be regenerated; artifacts have a retention period.
+
+A separate publication job updates only the chosen output directory and the source-split CSV. It preserves historical results, rebases onto unrelated branch updates and retries ordinary push races. If experiment code, the protocol or conflicting results changed during the run, the outputs remain in the artifact. Publication can be retried without rerunning the experiment. A historical workflow rerun uses that run's old code.
+
+To repeat only the evaluation of an existing prediction table:
+
+```matlab
+addpath("src")
+[intervals, comparisons] = review_presence_results("results/development");
+```
+
+This writes 95% percentile intervals using 2,000 source-pair resamples and seed `530582937`. Optional `Resamples`, `Seed` and `MakePlot` arguments control the review. Audio experiments use the same defaults through `BootstrapResamples` and `BootstrapSeed`.
 
 ## Evaluation
 
@@ -304,7 +332,7 @@ The always-present reference exposes the effect of prevalence: it obtains F1 0.8
 
 Overall precision/recall/F1 includes pure-source negatives and mixtures. SMR curves use mixtures only. Speech is weaker at negative SMR and music at positive SMR. At 0 dB neither source is weaker, so weaker-source recall is `NaN` with count zero and is omitted from that curve. Undefined precision/recall/F1 ratios are reported as zero. The corpus has no neither-source class; the preliminary evaluation does not measure silence/noise rejection.
 
-Specificity is `NaN` when there are no negatives; balanced accuracy and macro-F1 are `NaN` if either actual class is absent. The normal experiment includes both classes. Repeated mixtures of a source pair are related observations: any later uncertainty analysis must resample source pairs, rather than treating every SMR row as independent.
+Specificity is `NaN` when there are no negatives; balanced accuracy and macro-F1 are `NaN` if either actual class is absent. The normal experiment includes both classes. Repeated mixtures of a source pair are related observations. The bootstrap resamples whole pairs, including their controls, and uses shared draws for every system and paired difference. Its intervals describe test-source variation with fitted models and selected thresholds fixed. They do not include retraining or threshold-selection uncertainty. File-level grouping also leaves possible dependence between recordings by the same speaker or artist.
 
 ## MATLAB Requirements
 
