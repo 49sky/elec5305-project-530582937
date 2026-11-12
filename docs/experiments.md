@@ -68,7 +68,7 @@ intervals and error-case table from saved predictions, with no MUSAN or YAMNet
 download. The paired SVM intervals include zero for both targets; the point
 estimates alone are insufficient to establish a consistent weighting benefit.
 
-## Reserved final experiment
+## Final protocol
 
 [`config/final_protocol.json`](../config/final_protocol.json) records the planned
 seven-SMR experiment: 100 training pairs, 30 validation pairs and 50 test pairs
@@ -76,16 +76,28 @@ at indices 11-60 of the existing split. The preview checks these against the
 archived source lists without reading the audio. Push checks do not use those
 reserved test sources; the final audio experiment is a separate manual run.
 
-After the development checks, run the fixed protocol once for the final
-comparison. Use its results to answer the question and describe limitations,
-without retuning on that test set. The final report, GitHub Site and video are
+The fixed protocol was run once after the development checks. The final
+results are interpreted without retuning on the test set. The final report, GitHub Site and video are
 still to be prepared. The video should demonstrate a few representative clips,
 including a false alarm or missed weak source, and explain the processing.
 
-## Final run started
+## 13 November 2026: final run completed
 
 The [reserved final experiment](https://github.com/49sky/elec5305-project-530582937/actions/runs/43222393874)
-was started on 12 November with the fixed protocol. It uses 900 training,
-270 validation and 450 test examples from 100, 30 and 50 source pairs,
-respectively. The test pairs are indices 11-60 of the archived split. Results
-will be interpreted after the experiment and publication jobs complete.
+completed successfully, including result publication. It started on 12 November
+and finished on 13 November in Sydney. The run used 900 training, 270 validation
+and 450 test examples. Test pairs 11-60 matched the archived split and had no
+source-path overlap with training, validation or the original preliminary test.
+The recorded MATLAB YAMNet output was the expected softmax layer.
+
+The balanced SVM achieved balanced accuracies of 0.79875 for speech and 0.93250
+for music, compared with 0.50000 and 0.88375 for the unweighted SVM. YAMNet's
+validation thresholds were 0.05 for both outputs; its balanced accuracies were
+0.78000 and 0.93125, compared with 0.68125 and 0.86125 at fixed 0.5.
+
+The paired source-pair intervals for both modifications were above zero on
+this final set. Weak-source recall still fell at extreme SMRs. The
+[final analysis](final_results.md) explains the false-alarm/miss tradeoffs,
+intervals and limits. Results are in `results/final/`; models and the small
+audio demo are artifacts of the successful run. No final-test retuning or
+additional model experiment was performed.

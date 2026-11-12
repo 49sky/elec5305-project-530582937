@@ -10,9 +10,25 @@ The main research question is:
 
 The project is implemented primarily in MATLAB.
 
-The original preliminary run is preserved in [results/archive/preliminary-2026-10-27](results/archive/preliminary-2026-10-27/). The current experiment adds class-balanced evaluation, a controlled SVM weighting comparison, and validation-selected YAMNet thresholds. New development results are written to `results/development/`; the reserved final test set is separate.
+The preliminary comparisons are preserved in [results/archive/preliminary-2026-10-27](results/archive/preliminary-2026-10-27/) and [results/development](results/development/). The fixed final experiment completed successfully on 13 November 2026 (Sydney), using 50 previously unused test pairs across seven SMRs. [Final results and interpretation](docs/final_results.md) explain the measured findings.
 
-[Method notes and references](docs/methods.md) describe the design. The [development analysis](docs/development_results.md) explains the measured changes and remaining errors. The [experiment log](docs/experiments.md) records what has been tested and what remains to do.
+[Method notes and references](docs/methods.md) describe the design. The [development analysis](docs/development_results.md) and [experiment log](docs/experiments.md) trace the comparisons.
+
+## Final Results
+
+Each target has 400 positive and 50 negative test examples. Balanced accuracy averages recall and specificity; F1 below describes the present class.
+
+| System | Speech balanced accuracy | Speech F1 | Music balanced accuracy | Music F1 |
+| --- | ---: | ---: | ---: | ---: |
+| Always present | 0.5000 | 0.9412 | 0.5000 | 0.9412 |
+| SVM unweighted | 0.5000 | 0.9412 | 0.8838 | 0.9711 |
+| SVM balanced | 0.7988 | 0.8523 | 0.9325 | 0.9573 |
+| MATLAB YAMNet, fixed 0.5 | 0.6813 | 0.5321 | 0.8613 | 0.8389 |
+| MATLAB YAMNet, validation thresholds | 0.7800 | 0.7179 | 0.9313 | 0.9262 |
+
+Class balancing improved SVM balanced accuracy while trading some recall for fewer false alarms. The unweighted speech model accepted every test clip, which explains its high F1 and zero specificity. Validation-selected thresholds improved the MATLAB YAMNet comparison. Both approaches still missed very weak sources. The [final analysis](docs/final_results.md) includes paired confidence intervals, recall-versus-SMR curves and limitations; these controlled-mixture results do not establish performance on natural recordings.
+
+[Successful final workflow and artifacts](https://github.com/49sky/elec5305-project-530582937/actions/runs/43222393874) · [CSV results and plots](results/final/) · [Frozen protocol](config/final_protocol.json)
 
 ## Speech-to-Music Ratio
 
@@ -195,13 +211,13 @@ run = preliminary_mixture_demo(TrainPairs=100, ValidationPairs=10, TestPairs=10,
     SMRValues=[-20 -10 -5 0 5 10 20], ResultsDir="results/full_grid");
 ```
 
-This command still uses the ten development test pairs. To preview the reserved final source selection, without loading any audio or model:
+This command still uses the ten development test pairs. To preview the fixed final source selection, without loading any audio or model:
 
 ```matlab
 selected = run_final_experiment;
 ```
 
-The final run is a separate, explicit operation after the development comparison is complete:
+The completed final run is reproducible through the fixed protocol:
 
 ```matlab
 run = run_final_experiment(DryRun=false);
