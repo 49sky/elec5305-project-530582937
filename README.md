@@ -2,9 +2,22 @@
 
 [Code](https://github.com/49sky/elec5305-project-530582937) · [Download ZIP](https://github.com/49sky/elec5305-project-530582937/archive/refs/heads/main.zip) · [Project site](https://49sky.github.io/elec5305-project-530582937/)
 
-How does the relative level of speech and music affect detection when both are present?
+Speech and music often occur together in recordings. Detecting the stronger source can be straightforward, while the quieter source may be missed. This MATLAB project studies that problem through controlled mixtures of MUSAN speech and music recordings.
 
-This MATLAB project compares 40 handcrafted audio features with linear SVMs against pretrained YAMNet. It creates controlled mixtures from MUSAN recordings and measures speech and music presence separately.
+## Research question
+
+**How does speech-to-music ratio affect the detection of speech and music separately, and how does a linear SVM using handcrafted audio features compare with frozen MATLAB YAMNet on controlled mixtures?**
+
+Each clip receives two decisions: speech present and music present. A mixture should receive both labels. Speech-only and music-only clips provide controls for checking false alarms. Speech-to-music ratio (SMR) sets the relative source power: negative values mean music is stronger, and positive values mean speech is stronger.
+
+The comparison also examines two practical modifications: equal rather than empirical class priors for the SVM, and validation-selected rather than fixed 0.5 thresholds for YAMNet. The aim is to measure how these choices affect detection and false alarms as the relative source level changes. Model settings are chosen using validation data before evaluating the reserved test sources.
+
+## Approach
+
+- **Audio:** source files are separated into training, validation and test partitions before extracting central two-second, mono, 16 kHz excerpts. Each speech/music pair produces two pure-source controls and mixtures at specified SMRs.
+- **Features:** RMS, zero-crossing rate, five spectral descriptors and 13 MFCCs are measured in 25 ms frames with a 10 ms hop. Their means and standard deviations give 40 features per clip.
+- **Systems:** separate linear SVMs detect speech and music, using scaling fitted on training data. Frozen YAMNet supplies a pretrained comparison. The MATLAB model uses softmax outputs; its weights and output layer are kept fixed.
+- **Evaluation:** balanced accuracy is the primary measure, supported by F1, confusion counts, recall versus SMR and paired source-pair confidence intervals. The same test clips are used for every system.
 
 ## Results
 
@@ -21,6 +34,14 @@ The final experiment used 100 training pairs, 30 validation pairs and 50 previou
 Balanced accuracy averages recall and specificity. F1 describes the present class. The unweighted speech SVM accepted every clip, giving high F1 but zero specificity. Weighting and threshold selection improved balanced accuracy, although both approaches still missed very weak sources.
 
 See the [final analysis](docs/final_results.md), [CSV results and plots](https://github.com/49sky/elec5305-project-530582937/tree/main/results/final), [methods and references](docs/methods.md), and [experiment history](docs/experiments.md).
+
+## Conclusion
+
+Relative source level strongly affected detection. When speech was 20 dB below music, speech recall was 0.20 for the balanced SVM and 0.00 for validation-threshold YAMNet. When music was 20 dB below speech, music recall was 0.52 and 0.26 respectively.
+
+Class balancing and validation-selected thresholds improved balanced accuracy on the final test set. The balanced SVM had the highest point estimates for both targets, with its music result very close to YAMNet's. Balancing reduced false alarms at the cost of more missed positives; threshold selection recovered YAMNet detections but did not solve the weak-source problem.
+
+These findings apply to short, controlled MUSAN mixtures and source-track labels. File-level separation does not guarantee unseen speakers or artists, and the experiment does not establish performance on natural mixtures or silence/noise-only recordings. The [final analysis](docs/final_results.md) discusses these limits and the conditional confidence intervals.
 
 ## Requirements
 
