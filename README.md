@@ -78,6 +78,8 @@ check_reproduction("results/reproduction")
 
 The comparison checks the features, decisions, selected settings and metrics against the recorded final run. Output paths may differ; numerical values use a tolerance of `1e-6`. The experiment refuses to overwrite an existing final prediction table.
 
+The [full reproduction](https://github.com/49sky/elec5305-project-530582937/actions/runs/43366250478) on 13 November 2026 passed all 16 MATLAB tests and matched all eight recorded result tables.
+
 ## Run on GitHub
 
 Open **Actions → MATLAB → Run workflow** and select:

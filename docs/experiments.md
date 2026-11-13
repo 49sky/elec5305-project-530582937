@@ -24,7 +24,9 @@ The source manifest matched the archive. No final test file overlapped training,
 
 Balanced SVM accuracy was 0.79875 for speech and 0.93250 for music. Validation-threshold YAMNet reached 0.78000 and 0.93125. The paired intervals for both modifications were above zero on this set. Weak-source recall still fell at extreme SMRs. See the [final analysis](final_results.md) for the counts, curves and limitations.
 
-## Repository checks
+## 13 November: reproduction
+
+The [full reproduction](https://github.com/49sky/elec5305-project-530582937/actions/runs/43366250478) passed all 16 MATLAB tests. All eight CSV tables matched the recorded experiment, including 1,620 feature rows, 450 test predictions, selected settings and metrics, within the stated `1e-6` numerical tolerance. Only output paths were excluded from the comparison. The final protocol, source split and recorded results were unchanged. Fresh outputs, models, plots and short demo clips are available in the run's `presence-reproduce-final` artifact.
 
 The repository keeps the original, development and final results separately. Reproduction runs use a new output directory and compare their features, decisions, selected settings and metrics with the recorded final run. The workflow saves fresh outputs as an artifact rather than changing the recorded results.
 
