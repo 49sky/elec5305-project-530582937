@@ -1,5 +1,4 @@
 function [intervals,comparisons] = bootstrap_presence_metrics(metadata,predictions,systemNames,options)
-%BOOTSTRAP_PRESENCE_METRICS Resample complete source pairs, shared across systems.
 arguments
     metadata table
     predictions {mustBeNumericOrLogical}
@@ -19,8 +18,11 @@ n = numel(pairs);
 assert(n>=2,"presence:BootstrapPairs","At least two source pairs are needed.");
 previous = rng; restore = onCleanup(@()rng(previous));
 rng(options.Seed,'twister');
+% Keep each pair's controls and mixtures together in every resample.
 draws = randi(n,n,options.Resamples);
-truth = logical([metadata.SpeechPresent,metadata.MusicPresent]);
+truth = [metadata.SpeechPresent,metadata.MusicPresent];
+assert(all(ismember(truth,[0 1]),'all'),'presence:InvalidLabels','Presence labels must be zero or one.');
+truth = logical(truth);
 targets = ["Speech","Music"];
 intervals = table; comparisons = table;
 sampleBA = zeros(options.Resamples,numel(systemNames),2);
@@ -53,7 +55,7 @@ for target = 1:2
             bounds(1,:)',bounds(2,:)',repmat(n,2,1),repmat(options.Resamples,2,1), ...
             'VariableNames',{'System','Target','Metric','Estimate','Lower95','Upper95', ...
             'SourcePairs','Resamples'});
-        intervals = [intervals;rows]; %#ok<AGROW>
+        intervals = [intervals;rows];
     end
     for contrast = options.Contrasts'
         a = contrast(1); b = contrast(2);
@@ -62,7 +64,7 @@ for target = 1:2
             pointBA(a,target)-pointBA(b,target),bounds(1),bounds(2),n,options.Resamples, ...
             'VariableNames',{'System','Reference','Target','Difference','Lower95', ...
             'Upper95','SourcePairs','Resamples'});
-        comparisons = [comparisons;row]; %#ok<AGROW>
+        comparisons = [comparisons;row];
     end
 end
 end

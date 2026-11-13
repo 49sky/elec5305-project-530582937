@@ -1,8 +1,4 @@
 function [features,names,frames] = handcrafted_features(x,fs)
-%HANDCRAFTED_FEATURES Fixed 40-value segment descriptor (mean then std).
-% 25 ms periodic Hann frames, 10 ms hop, power spectrum, 85% rolloff,
-% 40 triangular HTK-mel bands (20 Hz to Nyquist), 13 orthonormal MFCCs
-% including c0. No deltas, pre-emphasis, liftering or segment-level fitting.
 
 validateattributes(x,{'numeric'},{'vector','real','finite','nonempty'});
 validateattributes(fs,{'numeric'},{'scalar','real','finite','>=',1000});

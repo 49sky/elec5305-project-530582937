@@ -1,5 +1,4 @@
 function [intervals,comparisons] = review_presence_results(resultsDir,options)
-%REVIEW_PRESENCE_RESULTS Evaluate saved decisions without reloading audio or models.
 arguments
     resultsDir (1,1) string = fullfile('results','development')
     options.Resamples (1,1) double {mustBeInteger,mustBePositive} = 2000
@@ -9,15 +8,16 @@ end
 file = fullfile(resultsDir,'preliminary_presence_predictions.csv');
 t = readtable(file,'TextType','string','Delimiter',',','ReadVariableNames',true);
 systems = ["Always present","SVM unweighted","SVM balanced"];
-p = cat(3,true(height(t),2),logical(t{:,{'SVMSpeechPresent','SVMMusicPresent'}}), ...
-    logical(t{:,{'BalancedSpeechPresent','BalancedMusicPresent'}}));
+p = cat(3,ones(height(t),2),t{:,{'SVMSpeechPresent','SVMMusicPresent'}}, ...
+    t{:,{'BalancedSpeechPresent','BalancedMusicPresent'}});
 contrasts = [3 2];
 if ismember('YAMNetSpeechPresent',t.Properties.VariableNames)
-    p = cat(3,p,logical(t{:,{'YAMNetSpeechPresent','YAMNetMusicPresent'}}), ...
-        logical(t{:,{'YAMNetTunedSpeechPresent','YAMNetTunedMusicPresent'}}));
+    p = cat(3,p,t{:,{'YAMNetSpeechPresent','YAMNetMusicPresent'}}, ...
+        t{:,{'YAMNetTunedSpeechPresent','YAMNetTunedMusicPresent'}});
     systems = [systems,"YAMNet fixed","YAMNet validation"];
     contrasts = [contrasts;5 4];
 end
+assert(all(ismember(p,[0 1]),'all'),'presence:InvalidPredictions','Presence predictions must be zero or one.');
 [intervals,comparisons] = bootstrap_presence_metrics(t,p,systems, ...
     Resamples=options.Resamples,Seed=options.Seed,Contrasts=contrasts);
 writetable(intervals,fullfile(resultsDir,'preliminary_metric_intervals.csv'));
@@ -35,7 +35,7 @@ for target = 1:2
         name = matlab.lang.makeValidName(systems(system));
         cases.(name) = p(rows,target,system);
     end
-    errors = [errors;cases]; %#ok<AGROW>
+    errors = [errors;cases];
 end
 writetable(errors,fullfile(resultsDir,'preliminary_error_cases.csv'));
 sourceRevision = "";

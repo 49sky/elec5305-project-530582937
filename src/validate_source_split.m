@@ -1,5 +1,4 @@
 function validate_source_split(split)
-%VALIDATE_SOURCE_SPLIT Reject repeated sources before any derived examples.
 allPaths = strings(0,1);
 for source = ["speech","music"]
     for partition = ["train","validation","test"]
@@ -7,7 +6,6 @@ for source = ["speech","music"]
         if any(ismissing(paths) | strlength(paths) == 0)
             error("presence:InvalidSplit","Source paths must be nonempty.");
         end
-        % Resolve relative paths before checking for repeated source paths.
         for k = 1:numel(paths)
             [ok,attributes] = fileattrib(paths(k));
             if ~ok
@@ -15,7 +13,7 @@ for source = ["speech","music"]
             end
             paths(k) = string(attributes.Name);
         end
-        allPaths = [allPaths; paths]; %#ok<AGROW>
+        allPaths = [allPaths; paths];
     end
 end
 if numel(unique(allPaths)) ~= numel(allPaths)

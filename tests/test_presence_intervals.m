@@ -53,6 +53,11 @@ verifyEqual(testCase,height(d),4);
 verifyTrue(testCase,isfile(fullfile(dest,'evaluation_manifest.json')));
 verifyTrue(testCase,isfile(fullfile(dest,'preliminary_error_cases.csv')));
 verifyTrue(testCase,all(a.Lower95<=a.Upper95));
+t = readtable(fullfile(dest,'preliminary_presence_predictions.csv'));
+t.SVMSpeechPresent(1) = 2;
+writetable(t,fullfile(dest,'preliminary_presence_predictions.csv'));
+verifyError(testCase,@()review_presence_results(dest,MakePlot=false), ...
+    'presence:InvalidPredictions');
 end
 
 function testFinalRunPreservesExistingPredictions(testCase)
@@ -63,4 +68,35 @@ writelines("Existing final predictions",file);
 verifyError(testCase,@()run_final_experiment(DryRun=false,ResultsDir=folder), ...
     'presence:FinalResultsExist');
 verifyEqual(testCase,strtrim(string(fileread(file))),"Existing final predictions");
+end
+
+function testInvalidLabelsAreRejected(testCase)
+t = table(repmat("test",6,1),[1;1;1;2;2;2],[1;0;2;1;0;1],[0;1;1;0;1;1], ...
+    'VariableNames',{'Partition','Pair','SpeechPresent','MusicPresent'});
+verifyError(testCase,@()bootstrap_presence_metrics(t,true(6,2),"A"), ...
+    'presence:InvalidLabels');
+end
+
+function testReproductionCheck(testCase)
+root = fileparts(fileparts(mfilename('fullpath')));
+oldFolder = pwd; oldPath = path;
+restore = onCleanup(@()restore_session(oldFolder,oldPath));
+cd(root); addpath(fullfile('tests','helpers'));
+folder = string(tempname); mkdir(folder);
+cleanup = onCleanup(@()rmdir(folder,'s'));
+files = dir(fullfile('results','final','*.csv'));
+for f = files'
+    copyfile(fullfile(f.folder,f.name),folder);
+end
+check_reproduction(folder);
+verifyTrue(testCase,isfile(fullfile(folder,'reproduction_check.json')));
+t = readtable(fullfile(folder,'preliminary_presence_predictions.csv'));
+t.SVMSpeechPresent(1) = 1-t.SVMSpeechPresent(1);
+writetable(t,fullfile(folder,'preliminary_presence_predictions.csv'));
+verifyError(testCase,@()check_reproduction(folder),'presence:ReproductionMismatch');
+verifyFalse(testCase,isfile(fullfile(folder,'reproduction_check.json')));
+end
+
+function restore_session(folder,searchPath)
+cd(folder); path(searchPath);
 end

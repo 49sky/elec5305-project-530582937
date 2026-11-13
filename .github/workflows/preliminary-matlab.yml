@@ -1,53 +1,30 @@
-name: MATLAB Presence Experiment
+name: MATLAB
 
 on:
+  push:
+    paths: ["src/**", "tests/**", "config/**", "data/splits/**", ".github/workflows/**"]
   workflow_dispatch:
     inputs:
       experiment:
-        description: Experiment to run
+        description: Run
         type: choice
+        default: checks
         required: true
-        default: development
-        options:
-          - development
-          - final
-  push:
-    paths:
-      - ".github/workflows/preliminary-matlab.yml"
-      - ".github/scripts/**"
-      - "src/**"
-      - "tests/**"
-      - "config/**"
+        options: [checks, development, reproduce-final]
 
 permissions:
   contents: read
 
 env:
   EXPERIMENT: ${{ inputs.experiment || 'checks' }}
-  RESULTS_DIR: ${{ inputs.experiment == 'final' && 'results/final' || 'results/development' }}
-  ARTIFACT_PREFIX: ${{ inputs.experiment == 'final' && 'final' || 'preliminary' }}
 
 jobs:
-  preliminary:
+  matlab:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Test concurrent result publication
-        run: python3 -m unittest discover -s tests -p 'test_publish_results.py' -v
-
-      - name: Check final-run destination
-        if: inputs.experiment == 'final'
-        run: |
-          if [ -f results/final/preliminary_presence_predictions.csv ]; then
-            echo "::error::Final predictions already exist. Review the saved final run."
-            exit 1
-          fi
-
-      - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v3
+      - uses: matlab-actions/setup-matlab@v3
         with:
           release: R2026b
           products: >
@@ -56,99 +33,48 @@ jobs:
             Deep_Learning_Toolbox
             Statistics_and_Machine_Learning_Toolbox
 
-      - name: Run synthetic regression tests
+      - name: Run tests
         uses: matlab-actions/run-command@v3
         with:
           command: addpath("src"); results = runtests("tests"); assertSuccess(results)
 
-      - name: Review saved development predictions
-        if: env.EXPERIMENT == 'checks'
-        uses: matlab-actions/run-command@v3
-        with:
-          command: addpath("src"); review_presence_results
-
-      - name: Download and verify MUSAN speech and music
+      - name: Download MUSAN
         if: env.EXPERIMENT != 'checks'
+        shell: bash
         run: |
           mkdir -p data
-          # Stream the official archive to avoid keeping a second 11 GB copy.
           curl --fail --location https://www.openslr.org/resources/17/musan.tar.gz \
             | tar -xz -C data --wildcards 'musan/speech/*' 'musan/music/*'
-          for category in speech music; do
-            folder="data/musan/$category"
-            if [ ! -d "$folder" ]; then
-              echo "::error::MUSAN $category folder is missing after extraction."
-              exit 1
-            fi
-            count=$(find "$folder" -type f -iname '*.wav' | wc -l)
-            echo "$category WAV files: $count"
-            if [ "$count" -eq 0 ]; then
-              echo "::error::No MUSAN $category WAV files were downloaded."
-              exit 1
-            fi
+          for kind in speech music; do
+            test -n "$(find "data/musan/$kind" -type f -iname '*.wav' -print -quit)"
           done
 
-      - name: Run development experiment
-        if: inputs.experiment == 'development'
+      - name: Run experiment
+        if: env.EXPERIMENT != 'checks'
         uses: matlab-actions/run-command@v3
         with:
-          command: addpath("src"); create_source_split; preliminary_mixture_demo
+          command: >-
+            addpath("src");
+            if strcmp(getenv("EXPERIMENT"),"development"),
+              create_source_split;
+              preliminary_mixture_demo(ResultsDir="results/run");
+            else,
+              run_final_experiment(DryRun=false,ResultsDir="results/run");
+              addpath("tests/helpers"); check_reproduction("results/run");
+            end
 
-      - name: Run reserved final experiment
-        if: inputs.experiment == 'final'
-        uses: matlab-actions/run-command@v3
-        with:
-          command: addpath("src"); run_final_experiment(DryRun=false)
-
-      - name: Save trained models and run provenance
+      - name: Save outputs
         if: env.EXPERIMENT != 'checks'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_PREFIX }}-handcrafted-models
-          path: ${{ env.RESULTS_DIR }}/preliminary_handcrafted_models.mat
+          name: presence-${{ env.EXPERIMENT }}
           if-no-files-found: error
-
-      - name: Save CSV and figure results
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_PREFIX }}-results
           path: |
             data/splits/source_split.csv
-            ${{ env.RESULTS_DIR }}/*.csv
-            ${{ env.RESULTS_DIR }}/*.json
-            ${{ env.RESULTS_DIR }}/preliminary_figures/*.png
-          if-no-files-found: error
-
-      - name: Save a small audio demonstration
-        if: env.EXPERIMENT != 'checks'
-        uses: actions/upload-artifact@v4
-        with:
-          name: presence-demo
-          path: |
-            ${{ env.RESULTS_DIR }}/preliminary_audio/pair_${{ inputs.experiment == 'final' && '11' || '01' }}_*.wav
-            ${{ env.RESULTS_DIR }}/preliminary_audio/SOURCES.txt
-            ${{ env.RESULTS_DIR }}/preliminary_audio/attribution/
-          if-no-files-found: error
-
-  publish-results:
-    needs: preliminary
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out the tested revision
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-
-      - name: Restore generated CSV and figure results
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_PREFIX }}-results
-
-      - name: Publish results without overwriting concurrent changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          bash .github/scripts/publish-preliminary-results.sh "$GITHUB_REF_NAME" "$RESULTS_DIR"
+            results/run/*.csv
+            results/run/*.json
+            results/run/*models.mat
+            results/run/preliminary_figures/*.png
+            results/run/preliminary_audio/pair_${{ inputs.experiment == 'development' && '01' || '11' }}_*.wav
+            results/run/preliminary_audio/SOURCES.txt
+            results/run/preliminary_audio/attribution/

@@ -1,5 +1,4 @@
 function [x,fs] = read_audio_segment(filePath,targetFs,durationSec)
-
 [x,fs0] = audioread(filePath);
 
 if size(x,2) > 1

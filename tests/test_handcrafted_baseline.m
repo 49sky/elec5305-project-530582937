@@ -116,7 +116,6 @@ verifyTrue(testCase,isfile(fullfile(outDir,"preliminary_figures","balanced_accur
 features = readtable(fullfile(outDir,"preliminary_handcrafted_features.csv"));
 verifyEqual(testCase,height(features),30);
 
-% Saved scaling comes from the training rows, and saved models reproduce margins.
 saved = load(fullfile(outDir,"preliminary_handcrafted_models.mat"));
 training = string(features.Partition) == "train";
 verifyEqual(testCase,saved.models.Mean,mean(features{training,10:end},1),"AbsTol",1e-9);
@@ -134,6 +133,16 @@ verifyTrue(testCase,all(isfinite(demo.SpeechMargin)));
 verifyEqual(testCase,height(selected),3);
 verifyEqual(testCase,unique(selected.Pair),2);
 verifySize(testCase,offset,[3 40]);
+oldPath = path; restorePath = onCleanup(@()path(oldPath));
+mockDir = fullfile(root,'mock'); mkdir(mockDir);
+writelines(["function varargout = audioPretrainedNetwork(varargin)"; ...
+    "error('presence:FixtureLicense','Toolbox licence unavailable.');";"end"], ...
+    fullfile(mockDir,'audioPretrainedNetwork.m'));
+addpath(mockDir,'-begin');
+verifyError(testCase,@()preliminary_mixture_demo( ...
+    SplitFile=fullfile(splitDir,'source_split.mat'),ResultsDir=fullfile(root,'network_error'), ...
+    TrainPairs=2,ValidationPairs=2,TestPairs=2,UseYAMNet=true,MakePlots=false), ...
+    'presence:FixtureLicense');
 end
 
 function testHeldOutRowsCannotChangeTraining(testCase)
@@ -162,11 +171,14 @@ scores = [.1 .8;.15 .7;.25 .2;.3 .1];
 verifyEqual(testCase,thresholds,[.2 .5]);
 verifyEqual(testCase,sum(tuning.Selected),2);
 verifyEqual(testCase,tuning.ValidationBalancedAccuracy(tuning.Selected),ones(2,1));
-% Applying different test scores cannot change a validation-selected threshold.
 decisions = [.1 .9;.9 .1]>=thresholds;
 verifyEqual(testCase,decisions,logical([0 1;1 0]));
 [ties,~] = select_presence_thresholds(0.4*ones(4,2),labels,[.2 .5 .8]);
 verifyEqual(testCase,ties,[.5 .5]);
+grid = 0:0.05:1;
+[ties,~] = select_presence_thresholds([.1 .1;.2 .2;.8 .8;.9 .9], ...
+    logical([0 0;0 0;1 1;1 1]),grid([8 14]));
+verifyEqual(testCase,ties,repmat(grid(8),1,2));
 verifyError(testCase,@() preliminary_mixture_demo(TestStartIndex=11,UseYAMNet=false), ...
     'presence:ReservedTestSources');
 end
@@ -213,4 +225,17 @@ verifyEqual(testCase,recall.WeakerSource,["Speech";"None";"Music";"Speech";"None
 verifyEqual(testCase,recall.WeakerSourceRecall([1 3 4 6]),[0;0;1;1]);
 verifyTrue(testCase,all(isnan(recall.WeakerSourceRecall([2 5]))));
 verifyEqual(testCase,recall.WeakerSourceCount([2 5]),[0;0]);
+[~,absent] = evaluate_presence_systems(metadata,predictions,["SVM","YAMNet"],20);
+verifyEqual(testCase,absent.Mixtures,[0;0]);
+verifyTrue(testCase,all(isnan(absent.SpeechRecall)));
+verifyTrue(testCase,all(isnan(absent.MusicRecall)));
+verifyTrue(testCase,all(isnan(absent.WeakerSourceRecall)));
+end
+
+function testChangedSettingsNeedNewDirectory(testCase)
+folder = string(tempname); mkdir(folder);
+cleanup = onCleanup(@()rmdir(folder,'s'));
+writelines('{"Configuration":{"UseYAMNet":true}}',fullfile(folder,'run_manifest.json'));
+verifyError(testCase,@()preliminary_mixture_demo(ResultsDir=folder,UseYAMNet=false), ...
+    'presence:OutputDirectory');
 end

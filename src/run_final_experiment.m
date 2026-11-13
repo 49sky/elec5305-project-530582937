@@ -1,5 +1,4 @@
 function result = run_final_experiment(options)
-%RUN_FINAL_EXPERIMENT Preview the fixed source selection before running it.
 arguments
     options.DryRun (1,1) logical = true
     options.ResultsDir (1,1) string = ""
@@ -33,7 +32,7 @@ for k = 1:3
         end
         selected = [selected;table(repmat(partitions(k),numel(indices),1), ...
             repmat(type,numel(indices),1),indices',paths(indices), ...
-            'VariableNames',{'Partition','Type','Index','Path'})]; %#ok<AGROW>
+            'VariableNames',{'Partition','Type','Index','Path'})];
     end
 end
 if options.DryRun

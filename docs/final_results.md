@@ -53,8 +53,7 @@ on other recordings.
 
 The balanced SVM had the highest balanced-accuracy point estimates for both
 targets. Its music result, 0.9325, was very close to validation-threshold
-YAMNet's 0.9313. These point estimates do not establish general superiority of
-handcrafted features over pretrained representations.
+YAMNet's 0.9313. The comparison applies to the source selection and processing used here.
 
 ## Paired uncertainty
 
@@ -110,8 +109,7 @@ curve excludes 0 dB because neither source is weaker at equal power.
 The fixed 0.5 YAMNet comparison uses the MATLAB softmax implementation, as
 documented in the [method notes](methods.md). Its class scores share a total
 of one, constraining simultaneous detection at that threshold. The TensorFlow
-reference uses independent sigmoid outputs. The experiment keeps the MATLAB
-head fixed, so it does not isolate the effect of replacing that head.
+reference uses independent sigmoid outputs. The MATLAB head stayed fixed throughout the comparison.
 
 The SVM weighting effect differed from the small development experiment. The
 final protocol also changed training/validation counts, source selections and
@@ -122,8 +120,8 @@ on matched examples with validation-only selection.
 The findings apply to controlled mixtures and source-track labels. Vocal music,
 pauses in speech excerpts, file-level rather than speaker/artist-level splits,
 and the absence of silence/noise-only controls limit broader interpretation.
-No subjective listening judgement is inferred from the labels. The saved
-error-case table identifies clips for later inspection.
+The saved error-case table identifies clips for listening alongside the
+source labels.
 
 The study supports two practical conclusions within this protocol: class
 balance and decision thresholds materially affect the comparison, and both
@@ -132,8 +130,9 @@ performance on natural, uncontrolled mixtures.
 
 ## Saved outputs
 
-[Final CSVs, manifests and plots](../results/final/) contain the measured
+[Final CSVs, manifests and plots](https://github.com/49sky/elec5305-project-530582937/tree/main/results/final) contain the measured
 results. The successful workflow also provides `final-handcrafted-models`,
 `final-results` and `presence-demo` artifacts. The small demo contains pair 11
 at all seven SMRs and its two pure-source controls, with source credits.
-The frozen protocol and experimental code remain unchanged after this analysis.
+The source selection, features, training rules and thresholds are fixed by
+the recorded protocol. Later reproductions use separate output directories.

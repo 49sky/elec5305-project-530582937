@@ -1,5 +1,4 @@
 function plot_presence_comparison(metrics,recallBySMR,figureDir)
-%PLOT_PRESENCE_COMPARISON Hard-decision metrics on the same test examples.
 systems = unique(metrics.System,"stable");
 fig = figure("Color","w","Visible","off","Position",[100 100 1100 430]);
 layout = tiledlayout(1,2,"TileSpacing","compact");

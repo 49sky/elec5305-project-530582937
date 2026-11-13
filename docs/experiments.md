@@ -1,103 +1,31 @@
-# Experiment log
+# Experiment history
 
-## 27 October 2026: original comparison
+## 27 October: original comparison
 
-The small experiment completed with ten training, validation and test pairs and
-three SMRs. Its files and configuration are preserved in
-[`results/archive/preliminary-2026-10-27`](../results/archive/preliminary-2026-10-27/).
+The [original run](https://github.com/49sky/elec5305-project-530582937/actions/runs/40511456636) used ten pairs per partition, two-second excerpts and three SMRs. Its files are preserved in [the archive](https://github.com/49sky/elec5305-project-530582937/tree/main/results/archive/preliminary-2026-10-27).
 
-| System | Speech F1 | Speech balanced accuracy | Music F1 | Music balanced accuracy |
-| --- | ---: | ---: | ---: | ---: |
-| Handcrafted SVM | 0.889 | 0.500 | 0.941 | 0.750 |
-| YAMNet, fixed 0.5 | 0.545 | 0.688 | 0.919 | 0.925 |
+The speech SVM accepted all 50 test examples. Positive-class F1 was 0.889, but balanced accuracy was 0.5. This motivated measures that account for negatives and a class-weighting comparison. The original C selection used validation F1.
 
-Balanced accuracies above were calculated later from the original confusion
-counts. No model was rerun to obtain them. The different rankings show why the
-initial F1 comparison alone cannot establish which representation is better.
+## 3 November: controlled modifications
 
-## 3 November 2026: evaluation and controlled modification
+The [development run](https://github.com/49sky/elec5305-project-530582937/actions/runs/41575559205) compared empirical and equal-prior SVMs using shared training-derived scaling and validation balanced accuracy. YAMNet retained its fixed 0.5 rule and added validation-selected thresholds.
 
-The development comparison adds:
+Balancing increased music balanced accuracy from 0.6375 to 0.7750: false positives on speech-only clips fell from six to three, with one additional missed positive. Speech balanced accuracy fell from 0.7250 to 0.6750. Both speech models detected 30 positives, while false positives rose from three to four.
 
-- an always-present reference and class-balanced metrics;
-- unweighted versus equal-prior SVMs with shared training-only scaling;
-- balanced-accuracy C selection for both SVM versions;
-- YAMNet validation scores and a separate validation-selected threshold for
-  each target, alongside its fixed 0.5 rule;
-- source manifests, confusion plots and a small audio demonstration.
+Selected YAMNet thresholds were 0.05 for speech and 0.15 for music. They recovered two speech-positive and four music-positive examples without additional observed false positives. Speech was still missed in all -10 and 0 dB mixtures.
 
-The hypothesis is that equal priors can reduce the tendency to accept every
-example as positive. That could improve balanced accuracy while reducing recall
-for a very weak source. The comparison must report both effects. An improvement
-is not assumed in advance.
+The [development outputs](https://github.com/49sky/elec5305-project-530582937/tree/main/results/development) contain the decisions, plots and later source-pair intervals. Both paired SVM weighting intervals included zero on these ten pairs.
 
-The [3 November run](https://github.com/49sky/elec5305-project-530582937/actions/runs/41575559205)
-passed the MATLAB checks, experiment and publication. Its outputs are in
-`results/development/`. The ten test pairs produced 50 examples.
+## 12-13 November: final comparison
 
-| System | Speech balanced accuracy | Speech F1 | Music balanced accuracy | Music F1 |
-| --- | ---: | ---: | ---: | ---: |
-| Always present | 0.500 | 0.889 | 0.500 | 0.889 |
-| SVM unweighted | 0.725 | 0.822 | 0.638 | 0.864 |
-| SVM balanced | 0.675 | 0.811 | 0.775 | 0.883 |
-| MATLAB YAMNet, fixed 0.5 | 0.688 | 0.545 | 0.925 | 0.919 |
-| MATLAB YAMNet, validation thresholds | 0.713 | 0.596 | 0.975 | 0.974 |
+The [final run](https://github.com/49sky/elec5305-project-530582937/actions/runs/43222393874) passed its tests, experiment and publication. The fixed protocol used 100 training, 30 validation and 50 previously unused test pairs across seven SMRs: 900, 270 and 450 examples respectively.
 
-Equal priors helped music specificity but reduced speech specificity. The
-weighting hypothesis was therefore only partly supported on this small set.
-The validation-selected YAMNet thresholds were 0.05 for speech and 0.15 for
-music. [Development analysis](development_results.md) separates the pure-source
-errors from mixture misses.
+The source manifest matched the archive. No final test file overlapped training, validation or the original preliminary test. The recorded MATLAB YAMNet head was softmax. Settings were selected on validation data, with no final-test retuning.
 
-## 12 November 2026: evaluation review
+Balanced SVM accuracy was 0.79875 for speech and 0.93250 for music. Validation-threshold YAMNet reached 0.78000 and 0.93125. The paired intervals for both modifications were above zero on this set. Weak-source recall still fell at extreme SMRs. See the [final analysis](final_results.md) for the counts, curves and limitations.
 
-The evaluation now includes 95% percentile intervals from 2,000 resamples of
-whole source pairs, with the same draws used for paired system comparisons.
-Saved prediction CSVs can be reviewed without loading audio or rerunning models.
-The original decisions remain unchanged. An error-case table identifies clips
-for later listening; its labels are source-track labels.
+## Repository checks
 
-The model description now identifies the MATLAB YAMNet softmax head explicitly.
-This differs from the independent sigmoid head in the TensorFlow reference.
-The experiment keeps the MATLAB model and records its output layer in new runs.
-The final source selection, SMRs and model-selection rules remain fixed.
+The repository keeps the original, development and final results separately. Reproduction runs use a new output directory and compare their features, decisions, selected settings and metrics with the recorded final run. The workflow saves fresh outputs as an artifact rather than changing the recorded results.
 
-The [evaluation check run](https://github.com/49sky/elec5305-project-530582937/actions/runs/43221702648)
-passed all 13 MATLAB tests and seven publication tests. It regenerated the
-intervals and error-case table from saved predictions, with no MUSAN or YAMNet
-download. The paired SVM intervals include zero for both targets; the point
-estimates alone are insufficient to establish a consistent weighting benefit.
-
-## Final protocol
-
-[`config/final_protocol.json`](../config/final_protocol.json) records the planned
-seven-SMR experiment: 100 training pairs, 30 validation pairs and 50 test pairs
-at indices 11-60 of the existing split. The preview checks these against the
-archived source lists without reading the audio. Push checks do not use those
-reserved test sources; the final audio experiment is a separate manual run.
-
-The fixed protocol was run once after the development checks. The final
-results are interpreted without retuning on the test set. The final report, GitHub Site and video are
-still to be prepared. The video should demonstrate a few representative clips,
-including a false alarm or missed weak source, and explain the processing.
-
-## 13 November 2026: final run completed
-
-The [reserved final experiment](https://github.com/49sky/elec5305-project-530582937/actions/runs/43222393874)
-completed successfully, including result publication. It started on 12 November
-and finished on 13 November in Sydney. The run used 900 training, 270 validation
-and 450 test examples. Test pairs 11-60 matched the archived split and had no
-source-path overlap with training, validation or the original preliminary test.
-The recorded MATLAB YAMNet output was the expected softmax layer.
-
-The balanced SVM achieved balanced accuracies of 0.79875 for speech and 0.93250
-for music, compared with 0.50000 and 0.88375 for the unweighted SVM. YAMNet's
-validation thresholds were 0.05 for both outputs; its balanced accuracies were
-0.78000 and 0.93125, compared with 0.68125 and 0.86125 at fixed 0.5.
-
-The paired source-pair intervals for both modifications were above zero on
-this final set. Weak-source recall still fell at extreme SMRs. The
-[final analysis](final_results.md) explains the false-alarm/miss tradeoffs,
-intervals and limits. Results are in `results/final/`; models and the small
-audio demo are artifacts of the successful run. No final-test retuning or
-additional model experiment was performed.
+The written project report and demonstration video remain separate submission deliverables.

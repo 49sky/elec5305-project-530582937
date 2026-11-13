@@ -1,12 +1,11 @@
 function result = presence_demo(audioFile,modelFile,options)
-%PRESENCE_DEMO Inspect the two SVM versions on one audio excerpt.
 arguments
     audioFile (1,1) string
     modelFile (1,1) string = fullfile('results','development','preliminary_handcrafted_models.mat')
     options.PlayAudio (1,1) logical = false
     options.MakePlot (1,1) logical = true
 end
-saved = load(modelFile);
+saved = load(modelFile,'models','balancedModels','configuration','featureNames');
 c = saved.configuration;
 x = read_audio_segment(audioFile,c.SampleRate,c.DurationSec);
 peak = max(abs(x)); assert(peak>eps,"The excerpt is silent.");

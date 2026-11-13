@@ -1,6 +1,4 @@
 function artifacts = preliminary_mixture_demo(options)
-%PRELIMINARY_MIXTURE_DEMO Reproducible handcrafted SVM / pretrained comparison.
-% Run from the repository root. Name-value options permit smaller smoke runs.
 arguments
     options.SplitFile (1,1) string = fullfile("data","splits","source_split.mat")
     options.ResultsDir (1,1) string = fullfile("results","development")
@@ -35,6 +33,18 @@ else
 end
 assert(~isempty(options.YAMNetThresholds) && all(options.YAMNetThresholds<=1), ...
     "YAMNet threshold candidates must be nonempty and between zero and one.");
+manifestFile = fullfile(options.ResultsDir,'run_manifest.json');
+if isfile(manifestFile)
+    previous = jsondecode(fileread(manifestFile));
+    fields = ["UseYAMNet","MakePlots","SMRValues","TrainPairs","ValidationPairs", ...
+        "TestPairs","TestStartIndex","SampleRate","DurationSec","BoxConstraints"];
+    for field = fields
+        if isfield(previous.Configuration,field) && ...
+                ~isequal(previous.Configuration.(field)(:),options.(field)(:))
+            error('presence:OutputDirectory','Use a new ResultsDir when changing experiment settings.');
+        end
+    end
+end
 if ~isfile(options.SplitFile)
     if options.SplitFile ~= fullfile("data","splits","source_split.mat")
         error("presence:MissingSplit","Split file does not exist: %s",options.SplitFile);
@@ -54,10 +64,9 @@ for k = 1:3
     [partitionX,partitionMetadata,featureNames,audio] = build_presence_dataset( ...
         split,partitions(k),pairCounts(k),options.SampleRate,options.DurationSec,options.SMRValues,first);
     if k==2, validationAudio = audio; end
-    X = [X; partitionX]; %#ok<AGROW>
-    metadata = [metadata; partitionMetadata]; %#ok<AGROW>
+    X = [X; partitionX];
+    metadata = [metadata; partitionMetadata];
 end
-% audio now contains only held-out test examples; discard training audio.
 labels = [metadata.SpeechPresent,metadata.MusicPresent];
 trainRows = metadata.Partition == "train";
 validationRows = metadata.Partition == "validation";
@@ -103,7 +112,6 @@ if options.UseYAMNet
     for row = 1:height(predictions)
         [yamnetScores(row,1),yamnetScores(row,2)] = yamnet_scores(audio{row},options.SampleRate,net,classNames);
     end
-    % Network weights stay frozen for both decision rules.
     predictions.YAMNetSpeechScore = yamnetScores(:,1);
     predictions.YAMNetMusicScore = yamnetScores(:,2);
     predictions.YAMNetSpeechPresent = yamnetScores(:,1) >= 0.5;
@@ -144,7 +152,6 @@ if options.UseYAMNet
 end
 write_confusions(metrics,options.ResultsDir);
 write_audio_credit(predictions,audioDir,options);
-% Preserve the original mixture-only CSV and YAMNet score summary.
 mixtures = predictions(predictions.AudioType == "mixture",:);
 writetable(mixtures,fullfile(options.ResultsDir,"preliminary_results.csv"));
 if options.UseYAMNet
@@ -164,6 +171,9 @@ toolboxes = ver;
 save(fullfile(options.ResultsDir,"preliminary_handcrafted_models.mat"), ...
     "models","balancedModels","tuning","yamnetThresholds","thresholdTuning", ...
     "configuration","split","metadata","featureNames","matlabVersion","toolboxes");
+if options.UseYAMNet
+    save(fullfile(options.ResultsDir,"preliminary_handcrafted_models.mat"),'net','classNames','-append');
+end
 manifest = struct('Configuration',configuration,'MATLABVersion',matlabVersion, ...
     'Toolboxes',toolboxes,'CodeRevision',string(getenv('GITHUB_SHA')), ...
     'CreatedUTC',string(datetime('now','TimeZone','UTC')), ...
@@ -203,7 +213,7 @@ for k = 1:height(metrics)
     rows = table(repmat(m.System,4,1),repmat(m.Target,4,1), ...
         ["Absent";"Absent";"Present";"Present"],["Absent";"Present";"Absent";"Present"], ...
         values,fractions,'VariableNames',{'System','Target','Actual','Predicted','Count','Fraction'});
-    counts = [counts;rows]; %#ok<AGROW>
+    counts = [counts;rows];
 end
 writetable(counts,fullfile(folder,"preliminary_confusion_counts.csv"));
 end
@@ -235,7 +245,8 @@ end
 function [net,classNames] = load_yamnet
 try
     [net,classNames] = audioPretrainedNetwork("yamnet");
-catch
+catch problem
+    if ~contains(problem.message,'yamnet.zip'), rethrow(problem); end
     downloadFolder = fullfile(tempdir,"pretrainedNetDownload");
     if ~isfolder(downloadFolder), mkdir(downloadFolder); end
     zipFile = websave(fullfile(downloadFolder,"yamnet.zip"), ...

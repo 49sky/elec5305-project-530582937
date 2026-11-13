@@ -2,6 +2,8 @@
 data/musan/
 data/splits/*.mat
 results/**/source_split.mat
+results/run/
+results/reproduction/
 
 # Generated audio
 results/**/preliminary_audio/*.wav
@@ -17,5 +19,3 @@ codegen/
 .DS_Store
 Thumbs.db
 
-# Python regression-test bytecode
-__pycache__/

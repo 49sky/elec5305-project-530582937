@@ -1,5 +1,4 @@
 function [mix,measuredSMR,scale] = make_smr_mixture(speech,music,targetSMR)
-
 speech = speech(:);
 music = music(:);
 

@@ -1,5 +1,4 @@
 function [speechScore,musicScore,scores] = yamnet_scores(x,fs,net,classNames)
-
 spectrograms = yamnetPreprocess(x,fs);
 scores = predict(net,spectrograms);
 

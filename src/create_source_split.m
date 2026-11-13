@@ -1,5 +1,4 @@
 function split = create_source_split(datasetRoot,outDir)
-
 if nargin < 1
     datasetRoot = fullfile("data","musan");
 end
@@ -44,7 +43,6 @@ repoPrefix = string(pwd) + filesep;
 speechPaths = erase(speechPaths,repoPrefix);
 musicPaths = erase(musicPaths,repoPrefix);
 
-% Sort before shuffling so filesystem enumeration order cannot change a split.
 speechPaths = sort(speechPaths);
 musicPaths = sort(musicPaths);
 speechPaths = speechPaths(randperm(numel(speechPaths)));

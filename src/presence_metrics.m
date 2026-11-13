@@ -1,5 +1,4 @@
 function metrics = presence_metrics(truth,predicted)
-%PRESENCE_METRICS Counts, positive-class F1 and class-balanced measures.
 validateattributes(truth,{'numeric','logical'},{'2d','binary','nonempty'});
 validateattributes(predicted,{'numeric','logical'},{'size',size(truth),'binary'});
 truth = logical(truth);

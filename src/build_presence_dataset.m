@@ -1,6 +1,4 @@
 function [X,metadata,featureNames,audio] = build_presence_dataset(split,partition,nPairs,fs,durationSec,smrValues,startPair)
-%BUILD_PRESENCE_DATASET One central segment per source, with pure negatives.
-% Pairing is deterministic; all derivatives retain their source partition.
 validateattributes(nPairs,{'numeric'},{'scalar','integer','positive'});
 if nargin < 7, startPair = 1; end
 validateattributes(startPair,{'numeric'},{'scalar','integer','positive'});
